@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Retrô Mundo Store</title>
+
+<style>
+body {
+    font-family: "Courier New", monospace;
+    background-color: #000;
+    color: #0f0;
+    margin: 0;
+    padding: 0;
+}
+
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+#messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: scroll;
+    border-bottom: 2px solid #0f0;
+}
+
+#messages div {
+    margin-bottom: 5px;
+}
+
+#input-container {
+    display: flex;
+    border-top: 2px solid #0f0;
+}
+
+#nickname-container {
+    display: flex;
+    padding: 10px;
+    border-bottom: 2px solid #0f0;
+}
+
+#nickname-input {
+    flex: 1;
+    padding: 5px;
+    background-color: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+    outline: none;
+}
+
+#set-nickname-btn {
+    padding: 5px 10px;
+    margin-left: 5px;
+    background-color: #0f0;
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+
+#message-input {
+    flex: 1;
+    padding: 10px;
+    background-color: #000;
+    color: #0f0;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+#send-btn {
+    padding: 10px 20px;
+    background-color: #0f0;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#send-btn:hover, #set-nickname-btn:hover {
+    background-color: #0c0;
+}
+</style>
+</head>
+<body>
+
+<!-- Escolher nickname -->
+<div id="nickname-container">
+    <input type="text" id="nickname-input" placeholder="Escolha seu nickname..." />
+    <button id="set-nickname-btn">Entrar</button>
+</div>
+
+<div id="chat-container" style="display:none;">
+    <div id="messages"></div>
+    <div id="input-container">
+        <input type="text" id="message-input" placeholder="Digite sua mensagem..." />
+        <button id="send-btn">Enviar</button>
+    </div>
+</div>
+
+<!-- Som de notificação -->
+<audio id="beep-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// CONFIGURAÇÃO DO FIREBASE (substitua pelos dados do seu projeto)
+const firebaseConfig = {
+  apiKey: "SEU_API_KEY",
+  authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+  databaseURL: "https://SEU_PROJECT_ID-default-rtdb.firebaseio.com",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_PROJECT_ID.appspot.com",
+  messagingSenderId: "SEU_SENDER_ID",
+  appId: "SEU_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const messagesRef = db.ref("messages");
+
+const messagesDiv = document.getElementById('messages');
+const input = document.getElementById('message-input');
+const button = document.getElementById('send-btn');
+const beep = document.getElementById('beep-sound');
+
+const nicknameContainer = document.getElementById('nickname-container');
+const nicknameInput = document.getElementById('nickname-input');
+const setNicknameBtn = document.getElementById('set-nickname-btn');
+const chatContainer = document.getElementById('chat-container');
+
+let nickname = "";
+
+// Escolher nickname
+setNicknameBtn.addEventListener('click', () => {
+    const name = nicknameInput.value.trim();
+    if (!name) return alert("Digite um nickname!");
+    nickname = name;
+    nicknameContainer.style.display = "none";
+    chatContainer.style.display = "flex";
+});
+
+// Enviar mensagem
+function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    const message = {
+        text: text,
+        time: Date.now(),
+        nickname: nickname
+    };
+    messagesRef.push(message);
+    input.value = '';
+}
+
+// Eventos
+button.addEventListener('click', sendMessage);
+input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+});
+
+// Receber mensagens em tempo real
+messagesRef.on('child_added', snapshot => {
+    const msg = snapshot.val();
+    const msgDiv = document.createElement('div');
+    const time = new Date(msg.time);
+    const hours = time.getHours().toString().padStart(2, '0');
+    const minutes = time.getMinutes().toString().padStart(2, '0');
+
+    msgDiv.textContent = `[${hours}:${minutes}] <${msg.nickname}>: ${msg.text}`;
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    // Toca beep se a mensagem não for do próprio usuário
+    if (msg.nickname !== nickname) beep.play();
+});
+</script>
+
+</body>
+</html>
