@@ -1,104 +1,408 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Retrô Mundo Store</title>
-<style>
-body { font-family: "Courier New", monospace; background-color:#000; color:#0f0; margin:0; padding:0;}
-#chat-container{display:flex; flex-direction:column; height:100vh; width:100%;}
-#messages{flex:1; padding:10px; overflow-y:scroll; border-bottom:2px solid #0f0;}
-#messages div{margin-bottom:5px;}
-#input-container{display:flex; border-top:2px solid #0f0;}
-#nickname-container{display:flex; padding:10px; border-bottom:2px solid #0f0;}
-#nickname-input{flex:1; padding:5px; background:#000; color:#0f0; border:1px solid #0f0; outline:none;}
-#set-nickname-btn{padding:5px 10px; margin-left:5px; background:#0f0; color:#000; border:none; cursor:pointer;}
-#message-input{flex:1; padding:10px; background:#000; color:#0f0; border:none; outline:none; font-size:16px;}
-#send-btn{padding:10px 20px; background:#0f0; color:#000; border:none; cursor:pointer; font-weight:bold;}
-#send-btn:hover,#set-nickname-btn:hover{background-color:#0c0;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RooStory - Rondonópolis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0f0f1a',
+                        foreground: '#f8fafc',
+                        border: '#2d2d3d',
+                        primary: '#8b5cf6',
+                        'primary-foreground': '#ffffff',
+                        muted: '#94a3b8',
+                        'muted-foreground': '#cbd5e1'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .chat-bubble {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Melhorias para mobile */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            /* Prevenir zoom em inputs em iOS */
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Garantir que gradientes funcionem bem */
+        button, [role="button"] {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 4px;
+        }
+        
+        /* Animações */
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
 </head>
-<body>
+<body class="bg-background text-foreground font-sans">
+    <div id="app" class="min-h-screen bg-background">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 backdrop-blur-md bg-background/95 border-b border-border transition-all duration-300 py-2 md:py-3">
+            <div class="container mx-auto px-3 sm:px-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-display font-bold text-lg sm:text-xl">
+                        <span class="gradient-text">Roo</span>Story
+                    </h2>
+                    <div class="flex items-center gap-1.5 sm:gap-2">
+                        <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-xs sm:text-sm text-muted-foreground">Online</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-<div id="nickname-container">
-    <input type="text" id="nickname-input" placeholder="Escolha seu nickname..." />
-    <button id="set-nickname-btn">Entrar</button>
-</div>
+        <!-- Main Content -->
+        <main class="container mx-auto px-3 sm:px-4 pb-8 md:pb-12">
+            <!-- Hero Section -->
+            <div class="mb-6 sm:mb-8 mt-4 md:mt-8">
+                <div class="text-center max-w-3xl mx-auto">
+                    <h1 class="font-display font-bold text-2xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">
+                        <span class="gradient-text">Rondonópolis Story</span>
+                    </h1>
+                    <p class="text-base sm:text-lg md:text-xl text-muted-foreground mb-4 sm:mb-6 px-2">
+                        Compartilhe suas histórias, experiências e momentos marcantes da nossa cidade!
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-xl mx-auto mb-6 sm:mb-8">
+                        <div class="bg-gradient-to-br from-background to-[#1a1a2e] border border-border rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold gradient-text">24h</div>
+                            <div class="text-sm text-muted-foreground">Online</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-background to-[#1a1a2e] border border-border rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold gradient-text">100%</div>
+                            <div class="text-sm text-muted-foreground">Gratuito</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-background to-[#1a1a2e] border border-border rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold gradient-text">🌎</div>
+                            <div class="text-sm text-muted-foreground">Comunidade</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button onclick="scrollToChat()" class="bg-primary text-primary-foreground font-medium py-3 px-6 rounded-lg hover:opacity-90 transition-opacity">
+                            Começar a Conversar
+                        </button>
+                        <button class="border border-border text-foreground font-medium py-3 px-6 rounded-lg hover:bg-white/5 transition-colors">
+                            Como Funciona?
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Section -->
+            <section id="chat-section" class="w-full max-w-2xl mx-auto">
+                <div class="bg-gradient-to-b from-background to-[#1a1a2e] border border-border rounded-xl overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="border-b border-border p-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-display font-bold text-lg">
+                                <span class="gradient-text">Chat Público</span>
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-muted-foreground" id="online-count">12 online</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-muted-foreground mt-1">
+                            Converse com outros rondonopolitanos em tempo real
+                        </p>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div class="h-[400px] overflow-y-auto p-4 space-y-4" id="chat-messages">
+                        <!-- Mensagens de exemplo -->
+                        <div class="chat-bubble">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                                    A
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-medium">Ana Silva</span>
+                                        <span class="text-xs text-muted-foreground">2 min atrás</span>
+                                    </div>
+                                    <p class="text-sm">Alguém sabe quando vai inaugurar o novo shopping?</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-bubble">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-sm">
+                                    C
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-medium">Carlos Oliveira</span>
+                                        <span class="text-xs text-muted-foreground">1 min atrás</span>
+                                    </div>
+                                    <p class="text-sm">Ouvi dizer que será no próximo mês! Estou ansioso</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-bubble">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                                    M
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-medium">Maria Santos</span>
+                                        <span class="text-xs text-muted-foreground">Agora</span>
+                                    </div>
+                                    <p class="text-sm">Alguém recomenda um bom restaurante na região central?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t border-border p-4">
+                        <div class="flex gap-2">
+                            <input 
+                                type="text" 
+                                id="message-input"
+                                placeholder="Digite sua mensagem..." 
+                                class="flex-1 bg-background border border-border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                onkeypress="handleKeyPress(event)"
+                            >
+                            <button 
+                                onclick="sendMessage()"
+                                class="bg-primary text-primary-foreground font-medium px-5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+                            >
+                                <span class="hidden sm:inline">Enviar</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:hidden" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-2">
+                            Pressione Enter para enviar • Sua mensagem é pública
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Espaço extra para mobile -->
+            <div class="h-12 md:h-0"></div>
+        </main>
 
-<div id="chat-container" style="display:none;">
-    <div id="messages"></div>
-    <div id="input-container">
-        <input type="text" id="message-input" placeholder="Digite sua mensagem..." />
-        <button id="send-btn">Enviar</button>
+        <!-- Footer -->
+        <footer class="border-t border-border py-4 md:py-6">
+            <div class="container mx-auto px-3 sm:px-4 text-center text-xs sm:text-sm text-muted-foreground">
+                <p>Rondonópolis Story © <span id="current-year">2024</span></p>
+                <p class="mt-0.5 md:mt-1 opacity-70">Feito com ❤️ para a comunidade rondonopolitana</p>
+            </div>
+        </footer>
+        
+        <!-- Botão flutuante para mobile -->
+        <button 
+            id="back-to-top"
+            class="fixed bottom-20 right-4 bg-primary text-primary-foreground rounded-full p-3 shadow-lg z-40 hidden"
+            onclick="scrollToTop()"
+            aria-label="Voltar ao topo"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+        </button>
     </div>
-</div>
 
-<audio id="beep-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
-
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-<script>
-// CONFIGURAÇÃO DO FIREBASE (substitua pelos seus dados)
-const firebaseConfig = {
-  apiKey: "SEU_API_KEY",
-  authDomain: "SEU_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://SEU_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_PROJECT_ID.appspot.com",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const messagesRef = db.ref("messages");
-
-const messagesDiv = document.getElementById('messages');
-const input = document.getElementById('message-input');
-const button = document.getElementById('send-btn');
-const beep = document.getElementById('beep-sound');
-
-const nicknameContainer = document.getElementById('nickname-container');
-const nicknameInput = document.getElementById('nickname-input');
-const setNicknameBtn = document.getElementById('set-nickname-btn');
-const chatContainer = document.getElementById('chat-container');
-
-let nickname = "";
-
-setNicknameBtn.addEventListener('click', () => {
-    const name = nicknameInput.value.trim();
-    if(!name) return alert("Digite um nickname!");
-    nickname = name;
-    nicknameContainer.style.display="none";
-    chatContainer.style.display="flex";
-});
-
-// Enviar mensagem
-function sendMessage() {
-    const text = input.value.trim();
-    if(!text) return;
-    const message = { text: text, time: Date.now(), nickname: nickname };
-    messagesRef.push(message);
-    input.value="";
-}
-
-button.addEventListener('click', sendMessage);
-input.addEventListener('keydown', e => { if(e.key==="Enter") sendMessage(); });
-
-// Receber mensagens em tempo real
-messagesRef.on('child_added', snapshot => {
-    const msg = snapshot.val();
-    const msgDiv = document.createElement('div');
-    const time = new Date(msg.time);
-    const hours = time.getHours().toString().padStart(2,'0');
-    const minutes = time.getMinutes().toString().padStart(2,'0');
-    msgDiv.textContent = `[${hours}:${minutes}] <${msg.nickname}>: ${msg.text}`;
-    messagesDiv.appendChild(msgDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    if(msg.nickname !== nickname) beep.play();
-});
-</script>
+    <script>
+        // Configurações iniciais
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Detectar se é mobile
+        function isMobile() {
+            return window.innerWidth < 768;
+        }
+        
+        // Mostrar/ocultar botão de voltar ao topo
+        function toggleBackToTop() {
+            const backToTopBtn = document.getElementById('back-to-top');
+            if (window.scrollY > 300 && isMobile()) {
+                backToTopBtn.classList.remove('hidden');
+            } else {
+                backToTopBtn.classList.add('hidden');
+            }
+        }
+        
+        // Funções de rolagem
+        function scrollToChat() {
+            document.getElementById('chat-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
+            });
+        }
+        
+        // Funções do chat
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesDiv = document.getElementById('chat-messages');
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = 'chat-bubble';
+                messageElement.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-sm">
+                            V
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-medium">Você</span>
+                                <span class="text-xs text-muted-foreground">${time}</span>
+                            </div>
+                            <p class="text-sm">${message}</p>
+                        </div>
+                    </div>
+                `;
+                
+                messagesDiv.appendChild(messageElement);
+                input.value = '';
+                
+                // Rolagem automática para a última mensagem
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                // Simular resposta automática (opcional)
+                setTimeout(() => {
+                    simulateReply();
+                }, 1000);
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function simulateReply() {
+            const messagesDiv = document.getElementById('chat-messages');
+            const replies = [
+                "Que interessante!",
+                "Concordo com você!",
+                "Alguém mais tem opinião sobre isso?",
+                "Ótima contribuição para a conversa!",
+                "Rondonópolis está evoluindo cada vez mais!"
+            ];
+            
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            const users = ['João', 'Pedro', 'Lucas', 'Fernanda', 'Beatriz'];
+            const randomUser = users[Math.floor(Math.random() * users.length)];
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const replyElement = document.createElement('div');
+            replyElement.className = 'chat-bubble';
+            replyElement.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm">
+                        ${randomUser.charAt(0)}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-medium">${randomUser}</span>
+                            <span class="text-xs text-muted-foreground">${time}</span>
+                        </div>
+                        <p class="text-sm">${randomReply}</p>
+                    </div>
+                </div>
+            `;
+            
+            messagesDiv.appendChild(replyElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Atualizar contador online
+            updateOnlineCount();
+        }
+        
+        function updateOnlineCount() {
+            const countElement = document.getElementById('online-count');
+            const baseCount = 12;
+            const randomChange = Math.floor(Math.random() * 5) - 2; // -2 a +2
+            const newCount = Math.max(1, baseCount + randomChange);
+            countElement.textContent = `${newCount} online`;
+        }
+        
+        // Event Listeners
+        window.addEventListener('scroll', toggleBackToTop);
+        window.addEventListener('resize', toggleBackToTop);
+        
+        // Inicializar
+        toggleBackToTop();
+        
+        // Simular atividade no chat
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30% de chance a cada intervalo
+                simulateReply();
+            }
+        }, 15000); // A cada 15 segundos
+        
+        // Atualizar contador online periodicamente
+        setInterval(updateOnlineCount, 30000); // A cada 30 segundos
+    </script>
 </body>
 </html>
