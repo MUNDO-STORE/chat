@@ -1,43 +1,2311 @@
-import { HeroSection } from "@/components/HeroSection";
-import { PublicChat } from "@/components/PublicChat";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Rondonópolis Store - Chat & Serviços</title>
+  
+  <!-- RESPONSIVO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff0000">
+  <meta name="description" content="Rondonópolis Store - Serviços de informática e chat comunitário">
+  
+  <!-- IOS -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #ff0000;
+      --secondary-color: #2c3e50;
+      --light-bg: #f5f5f5;
+      --dark-bg: #0d0d0d;
+      --text-color: #333;
+      --light-text: #fff;
+      --border-color: #ddd;
+      --online-color: #2ecc71;
+      --offline-color: #e74c3c;
+      --private-chat-bg: #fff8e1;
+      --card-bg: #1a1a1a;
+      --whatsapp-green: #25D366;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      transition: background 0.3s;
+      overflow-x: hidden;
+    }
+    
+    /* Layout para PC */
+    .pc-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Layout para Mobile */
+    .mobile-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    /* Painel lateral para PC */
+    .sidebar-pc {
+      width: 350px;
+      background-color: var(--card-bg);
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    
+    /* Conteúdo principal */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    /* Banner de serviços */
+    .services-banner {
+      background: linear-gradient(to right, #0d0d0d, #1a1a1a);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 3px solid var(--primary-color);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 10;
+      transition: opacity 0.5s ease-in-out;
+    }
+    
+    .services-banner.hidden {
+      opacity: 0;
+      height: 0;
+      padding: 0;
+      overflow: hidden;
+      border-bottom: none;
+    }
+    
+    .services-banner h2 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+    
+    .services-banner p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    
+    .services-banner .highlight {
+      color: #ffcc00;
+      font-weight: bold;
+    }
+    
+    /* Container do botão do WhatsApp - AGORA ABAIXO DO BANNER */
+    .whatsapp-container {
+      background-color: rgba(26, 26, 26, 0.9);
+      padding: 10px 15px;
+      text-align: center;
+      border-bottom: 2px solid var(--whatsapp-green);
+      z-index: 9;
+    }
+    
+    .whatsapp-button {
+      background-color: var(--whatsapp-green);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      margin: 5px 0;
+    }
+    
+    .whatsapp-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    .whatsapp-button:active {
+      transform: translateY(-1px);
+    }
+    
+    .whatsapp-button i {
+      font-size: 1.5rem;
+    }
+    
+    .whatsapp-label {
+      color: #ffcc00;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    /* Versão mobile do botão do WhatsApp */
+    .mobile .whatsapp-button {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    
+    .mobile .whatsapp-label {
+      font-size: 0.8rem;
+    }
+    
+    /* Botão flutuante também disponível (adicional) */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    
+    .whatsapp-float-button {
+      background-color: var(--whatsapp-green);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-size: 1.8rem;
+    }
+    
+    .whatsapp-float-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    .mobile .whatsapp-float {
+      bottom: 80px;
+      right: 20px;
+    }
+    
+    .mobile .whatsapp-float-button {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+    
+    /* Cabeçalho do chat */
+    .chat-header {
+      background-color: var(--secondary-color);
+      color: var(--light-text);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .chat-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .chat-title h1 {
+      font-size: 1.5rem;
+    }
+    
+    .mobile .chat-title h1 {
+      font-size: 1.2rem;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .control-btn {
+      background: var(--primary-color);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+    
+    .mobile .control-btn {
+      width: 35px;
+      height: 35px;
+      font-size: 1rem;
+    }
+    
+    .control-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    /* PWA Installer */
+    .pwa-installer {
+      padding: 25px;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-bottom: 1px solid #333;
+    }
+    
+    .pwa-installer h3 {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+    
+    .pwa-installer p {
+      color: #ccc;
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .mobile .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+    
+    .btn-install {
+      background: var(--primary-color);
+      color: var(--light-text);
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    .btn-site {
+      background: #333;
+      color: var(--light-text);
+      width: 100%;
+    }
+    
+    .btn-install:hover, .btn-site:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    /* Perfil do usuário */
+    .user-profile {
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid #333;
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .profile-pic-container {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--primary-color);
+      cursor: pointer;
+    }
+    
+    .mobile .profile-pic-container {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-pic-overlay {
+      position: absolute;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 5px;
+      font-size: 0.8rem;
+    }
+    
+    .profile-info h3 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+    }
+    
+    .mobile .profile-info h3 {
+      font-size: 1rem;
+    }
+    
+    .profile-info .status {
+      font-size: 0.9rem;
+      color: var(--online-color);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .profile-info .status i {
+      font-size: 0.7rem;
+    }
+    
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ccc;
+    }
+    
+    .form-group input, .form-group select {
+      padding: 10px 12px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      background-color: #222;
+      color: white;
+    }
+    
+    .mobile .form-group input, .mobile .form-group select {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+    
+    .save-profile {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+    
+    .save-profile:hover {
+      opacity: 0.9;
+    }
+    
+    /* Lista de usuários */
+    .users-list {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    
+    .users-list h3 {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+      color: #ccc;
+    }
+    
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 8px;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .user-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .user-item.active {
+      background-color: rgba(255, 0, 0, 0.1);
+    }
+    
+    .user-item .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .mobile .user-item .avatar {
+      width: 35px;
+      height: 35px;
+    }
+    
+    .user-item .user-info {
+      flex: 1;
+    }
+    
+    .user-item .user-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: white;
+    }
+    
+    .mobile .user-item .user-name {
+      font-size: 0.9rem;
+    }
+    
+    .user-item .user-status {
+      font-size: 0.8rem;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .user-item .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--offline-color);
+    }
+    
+    .user-item .status-dot.online {
+      background-color: var(--online-color);
+    }
+    
+    .private-chat-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    
+    /* Área do chat */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #111;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background-color: #0a0a0a;
+    }
+    
+    .mobile .chat-messages {
+      padding: 15px;
+    }
+    
+    .message {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .message.own-message {
+      flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      align-self: flex-end;
+    }
+    
+    .mobile .message-avatar {
+      width: 35px;
+      height: 35px;
+    }
+    
+    .message-content {
+      max-width: 70%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .message.own-message .message-content {
+      align-items: flex-end;
+    }
+    
+    .message-sender {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      color: #aaa;
+    }
+    
+    .message-bubble {
+      padding: 12px 15px;
+      border-radius: 18px;
+      background-color: #222;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      position: relative;
+      word-wrap: break-word;
+      color: white;
+    }
+    
+    .message.own-message .message-bubble {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+    }
+    
+    .message-bubble img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+    
+    .message-time {
+      font-size: 0.75rem;
+      color: #777;
+      margin-top: 5px;
+    }
+    
+    /* Solicitação de chat privado */
+    .private-chat-request {
+      background-color: var(--private-chat-bg);
+      border: 1px dashed #ffb300;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+    
+    .private-chat-request h4 {
+      color: #e65100;
+      margin-bottom: 10px;
+    }
+    
+    .private-chat-btns {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .accept-btn, .reject-btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .accept-btn {
+      background-color: var(--online-color);
+      color: white;
+    }
+    
+    .reject-btn {
+      background-color: var(--offline-color);
+      color: white;
+    }
+    
+    /* Área de entrada de mensagens */
+    .chat-input-area {
+      padding: 15px;
+      border-top: 1px solid #333;
+      background-color: #111;
+    }
+    
+    .mobile .chat-input-area {
+      padding: 10px;
+    }
+    
+    .input-container {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    
+    .emoji-btn, .image-btn, .send-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: #aaa;
+      cursor: pointer;
+      padding: 5px;
+    }
+    
+    .mobile .emoji-btn, .mobile .image-btn, .mobile .send-btn {
+      font-size: 1.3rem;
+    }
+    
+    .send-btn {
+      color: var(--primary-color);
+    }
+    
+    .message-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #444;
+      border-radius: 25px;
+      resize: none;
+      font-size: 1rem;
+      max-height: 120px;
+      overflow-y: auto;
+      background-color: #222;
+      color: white;
+    }
+    
+    .mobile .message-input {
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+    
+    .message-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    .emoji-picker-container {
+      position: absolute;
+      bottom: 70px;
+      right: 20px;
+      background-color: #222;
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      z-index: 1000;
+      max-width: 300px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    
+    .emoji-picker-container.show {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 5px;
+    }
+    
+    .emoji-picker-container span {
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px;
+      text-align: center;
+      transition: background 0.2s;
+      border-radius: 5px;
+    }
+    
+    .emoji-picker-container span:hover {
+      background-color: #444;
+    }
+    
+    /* Modal de imagem */
+    .image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .image-modal.show {
+      display: flex;
+    }
+    
+    .image-modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      z-index: 2001;
+    }
+    
+    /* Modal de configurações */
+    .settings-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .settings-modal.show {
+      display: flex;
+    }
+    
+    .settings-content {
+      background-color: #222;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      padding: 25px;
+      position: relative;
+      color: white;
+      border: 1px solid #444;
+    }
+    
+    .close-settings {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #aaa;
+    }
+    
+    .settings-content h2 {
+      margin-bottom: 20px;
+      color: var(--primary-color);
+    }
+    
+    .settings-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #444;
+    }
+    
+    .font-size-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .font-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .theme-options {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .theme-btn {
+      padding: 8px 15px;
+      border: 2px solid #444;
+      background: #333;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+    
+    .theme-btn.active {
+      border-color: var(--primary-color);
+      background-color: var(--primary-color);
+    }
+    
+    /* Menu móvel */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #1a1a1a;
+      border-top: 1px solid #333;
+      z-index: 100;
+      padding: 10px;
+    }
+    
+    .mobile.mobile-menu {
+      display: flex;
+      justify-content: space-around;
+    }
+    
+    .mobile-menu-btn {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 10px;
+      flex: 1;
+      font-size: 0.8rem;
+    }
+    
+    .mobile-menu-btn.active {
+      color: var(--primary-color);
+    }
+    
+    .mobile-menu-btn i {
+      font-size: 1.2rem;
+    }
+    
+    /* Classe para mensagens do sistema */
+    .system-message {
+      text-align: center;
+      margin: 15px 0;
+      color: #777;
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+    
+    /* Estilos para modo tela cheia */
+    body.fullscreen {
+      padding: 0;
+    }
+    
+    body.fullscreen .container {
+      max-width: 100%;
+    }
+    
+    /* Animações */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    /* Esconder elementos não necessários no mobile */
+    .mobile .sidebar-pc {
+      display: none;
+    }
+    
+    .mobile .pwa-installer.mobile-only {
+      display: block;
+    }
+    
+    .pc .pwa-installer.mobile-only {
+      display: none;
+    }
+    
+    /* Visibilidade condicional */
+    .mobile-only {
+      display: none;
+    }
+    
+    .pc-only {
+      display: block;
+    }
+    
+    .mobile .mobile-only {
+      display: block;
+    }
+    
+    .mobile .pc-only {
+      display: none;
+    }
+    
+    /* Páginas para mobile */
+    .mobile-page {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+    }
+    
+    .mobile-page.active {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Botão flutuante para mobile (para nova mensagem) */
+    .floating-action-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+    
+    .floating-action-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    /* Ajustes para telas muito pequenas */
+    @media (max-width: 480px) {
+      .services-banner h2 {
+        font-size: 1.1rem;
+      }
+      
+      .services-banner p {
+        font-size: 0.85rem;
+      }
+      
+      .chat-title h1 {
+        font-size: 1rem;
+      }
+      
+      .message-bubble {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+      
+      .whatsapp-button {
+        padding: 10px 15px;
+        font-size: 13px;
+      }
+      
+      .whatsapp-label {
+        font-size: 0.8rem;
+      }
+    }
+    
+    /* Ajuste para quando o banner estiver oculto */
+    .services-banner.hidden + .whatsapp-container {
+      margin-top: 0;
+    }
+  </style>
+</head>
 
-const Index = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display font-bold text-xl">
-              <span className="gradient-text">Roo</span>Story
-            </h2>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm text-muted-foreground">Online</span>
+<body class="pc">
+  <!-- Layout para PC -->
+  <div class="pc-layout" id="pcLayout">
+    <!-- Painel lateral (PC) -->
+    <div class="sidebar-pc">
+      <!-- PWA Installer -->
+      <div class="pwa-installer pc-only">
+        <h3>Mundo Store App</h3>
+        <p>Instale nosso aplicativo para acessar mais rápido e receber notificações!</p>
+        <button class="btn btn-install" id="installBtnPc">
+          <i class="fas fa-download"></i> Instalar App
+        </button>
+        <button class="btn btn-site" onclick="location.href='https://mundo-store.github.io'">
+          <i class="fas fa-globe"></i> Acessar Site
+        </button>
+      </div>
+      
+      <!-- Perfil do usuário -->
+      <div class="user-profile">
+        <div class="profile-header">
+          <div class="profile-pic-container" id="profilePicContainer">
+            <img src="https://ui-avatars.com/api/?name=Usuario&background=ff0000&color=fff" alt="Foto de perfil" class="profile-pic" id="profilePic">
+            <div class="profile-pic-overlay">Alterar</div>
+          </div>
+          <div class="profile-info">
+            <h3 id="userNameDisplay">Usuário</h3>
+            <div class="status">
+              <i class="fas fa-circle"></i> Online
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Main */}
-      <main className="container max-w-6xl mx-auto px-4 pb-12">
-        <HeroSection />
         
-        {/* Chat Section */}
-        <section className="max-w-2xl mx-auto">
-          <PublicChat />
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-6">
-        <div className="container max-w-6xl mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Rondonópolis Story © {new Date().getFullYear()}</p>
-          <p className="mt-1 opacity-70">Feito com ❤️ para a comunidade rondonopolitana</p>
+        <form class="profile-form" id="profileForm">
+          <div class="form-group">
+            <label for="userName">Nome/Nickname:</label>
+            <input type="text" id="userName" required minlength="3" placeholder="Digite seu nome">
+          </div>
+          
+          <div class="form-group">
+            <label for="userAge">Idade (min 16):</label>
+            <input type="number" id="userAge" required min="16" max="100" value="18">
+          </div>
+          
+          <div class="form-group">
+            <label for="userGender">Gênero:</label>
+            <select id="userGender">
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outro">Outro</option>
+              <option value="prefiro-nao-dizer">Prefiro não dizer</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="userStatus">Estado Civil:</label>
+            <select id="userStatus">
+              <option value="solteiro">Solteiro(a)</option>
+              <option value="casado">Casado(a)</option>
+              <option value="divorciado">Divorciado(a)</option>
+              <option value="viuvo">Viúvo(a)</option>
+              <option value="uniao-estavel">União Estável</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="userNeighborhood">Bairro (Rondonópolis):</label>
+            <input type="text" id="userNeighborhood" placeholder="Ex: Vila Aurora">
+          </div>
+          
+          <button type="submit" class="save-profile">Salvar Perfil</button>
+        </form>
+      </div>
+      
+      <!-- Lista de usuários -->
+      <div class="users-list">
+        <h3>Usuários Online (<span id="onlineCount">1</span>)</h3>
+        <div id="usersList">
+          <!-- Lista de usuários será carregada aqui -->
         </div>
-      </footer>
+      </div>
     </div>
-  );
-};
-
-export default Index;
+    
+    <!-- Conteúdo principal (PC) -->
+    <div class="main-content">
+      <!-- Banner de serviços -->
+      <div class="services-banner" id="servicesBanner">
+        <h2>💻 SERVIÇOS PROFISSIONAIS</h2>
+        <p><strong>FORMATAÇÃO COMPUTADORES R$80,00</strong></p>
+        <p>✅ INSTALAÇÃO WINDOWS 10/11 PRO + OFFICE ATIVADO</p>
+        <p>✅ CLIENTE TRAZ E JÁ ESPERA NO LOCAL!</p>
+        <p>✅ ATENDO TODOS OS DIAS E FERIADOS (RONDONÓPOLIS)</p>
+        <p>✅ SUPORTE REMOTO 24 HORAS QUALQUER CIDADE <span class="highlight">R$40,00</span></p>
+        <p>✅ INSTALAÇÃO OFFICE ATIVADO</p>
+        <p>✅ ATIVAÇÃO WINDOWS E OFFICE</p>
+      </div>
+      
+      <!-- Container do botão WhatsApp ABAIXO do banner -->
+      <div class="whatsapp-container">
+        <div class="whatsapp-label">CLIQUE AQUI PARA CHAMAR NO WHATSAPP</div>
+        <a href="https://wa.link/rloc2t" target="_blank" class="whatsapp-button">
+          <i class="fab fa-whatsapp"></i>
+          Falar no WhatsApp
+        </a>
+      </div>
+      
+      <!-- Área do chat -->
+      <div class="chat-area">
+        <!-- Cabeçalho do chat -->
+        <header class="chat-header">
+          <div class="chat-title">
+            <i class="fas fa-comments"></i>
+            <h1>RONDONÓPOLIS STORE CHAT</h1>
+          </div>
+          <div class="controls">
+            <button class="control-btn" id="fullscreenBtn" title="Tela cheia">
+              <i class="fas fa-expand"></i>
+            </button>
+            <button class="control-btn" id="settingsBtn" title="Configurações">
+              <i class="fas fa-cog"></i>
+            </button>
+          </div>
+        </header>
+        
+        <!-- Mensagens do chat -->
+        <div class="chat-messages" id="chatMessages">
+          <div class="system-message">
+            Bem-vindo ao chat da Rondonópolis Store! Digite sua mensagem abaixo.
+          </div>
+        </div>
+        
+        <!-- Solicitação de chat privado -->
+        <div class="private-chat-request" id="privateChatRequest" style="display: none;">
+          <h4>Solicitação de Chat Privado</h4>
+          <p id="privateRequestText">Usuário deseja iniciar um chat privado com você.</p>
+          <div class="private-chat-btns">
+            <button class="accept-btn" id="acceptPrivateBtn">Aceitar</button>
+            <button class="reject-btn" id="rejectPrivateBtn">Recusar</button>
+          </div>
+        </div>
+        
+        <!-- Área de entrada de mensagens -->
+        <div class="chat-input-area">
+          <div class="input-container">
+            <button class="emoji-btn" id="emojiBtn" title="Emojis">
+              <i class="far fa-smile"></i>
+            </button>
+            
+            <button class="image-btn" id="imageBtn" title="Enviar imagem">
+              <i class="far fa-image"></i>
+            </button>
+            
+            <textarea class="message-input" id="messageInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+            
+            <button class="send-btn" id="sendBtn" title="Enviar mensagem">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+          
+          <!-- Seletor de emojis -->
+          <div class="emoji-picker-container" id="emojiPicker">
+            <!-- Emojis serão carregados aqui via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Layout para Mobile -->
+  <div class="mobile-layout" id="mobileLayout" style="display: none;">
+    <!-- Banner de serviços -->
+    <div class="services-banner" id="servicesBannerMobile">
+      <h2>💻 SERVIÇOS PROFISSIONAIS</h2>
+      <p><strong>FORMATAÇÃO COMPUTADORES R$80,00</strong></p>
+      <p>✅ INSTALAÇÃO WINDOWS 10/11 PRO + OFFICE ATIVADO</p>
+    </div>
+    
+    <!-- Container do botão WhatsApp ABAIXO do banner (mobile) -->
+    <div class="whatsapp-container">
+      <div class="whatsapp-label">CLIQUE AQUI PARA CHAMAR NO WHATSAPP</div>
+      <a href="https://wa.link/rloc2t" target="_blank" class="whatsapp-button">
+        <i class="fab fa-whatsapp"></i>
+        Falar no WhatsApp
+      </a>
+    </div>
+    
+    <!-- PWA Installer para mobile -->
+    <div class="pwa-installer mobile-only" id="mobilePwaInstaller">
+      <h3>Mundo Store App</h3>
+      <p>Instale nosso aplicativo para acesso rápido!</p>
+      <button class="btn btn-install" id="installBtnMobile">
+        <i class="fas fa-download"></i> Instalar App
+      </button>
+      <button class="btn btn-site" onclick="location.href='https://mundo-store.github.io'">
+        <i class="fas fa-globe"></i> Acessar Site
+      </button>
+    </div>
+    
+    <!-- Páginas para mobile (sistema de abas) -->
+    <div class="mobile-page active" id="mobileChatPage">
+      <!-- Cabeçalho do chat (mobile) -->
+      <header class="chat-header">
+        <div class="chat-title">
+          <i class="fas fa-comments"></i>
+          <h1>RONDONÓPOLIS STORE</h1>
+        </div>
+        <div class="controls">
+          <button class="control-btn" id="fullscreenBtnMobile" title="Tela cheia">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="control-btn" id="settingsBtnMobile" title="Configurações">
+            <i class="fas fa-cog"></i>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Mensagens do chat -->
+      <div class="chat-messages" id="chatMessagesMobile">
+        <div class="system-message">
+          Bem-vindo ao chat da Rondonópolis Store!
+        </div>
+      </div>
+      
+      <!-- Solicitação de chat privado -->
+      <div class="private-chat-request" id="privateChatRequestMobile" style="display: none;">
+        <h4>Chat Privado</h4>
+        <p id="privateRequestTextMobile">Usuário deseja iniciar um chat privado.</p>
+        <div class="private-chat-btns">
+          <button class="accept-btn" id="acceptPrivateBtnMobile">Aceitar</button>
+          <button class="reject-btn" id="rejectPrivateBtnMobile">Recusar</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Página de perfil (mobile) -->
+    <div class="mobile-page" id="mobileProfilePage">
+      <div class="chat-header">
+        <div class="chat-title">
+          <i class="fas fa-user-circle"></i>
+          <h1>MEU PERFIL</h1>
+        </div>
+        <button class="control-btn" id="backToChatBtn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+      
+      <div class="user-profile" style="flex: 1; overflow-y: auto;">
+        <div class="profile-header">
+          <div class="profile-pic-container" id="profilePicContainerMobile">
+            <img src="https://ui-avatars.com/api/?name=Usuario&background=ff0000&color=fff" alt="Foto de perfil" class="profile-pic" id="profilePicMobile">
+            <div class="profile-pic-overlay">Alterar</div>
+          </div>
+          <div class="profile-info">
+            <h3 id="userNameDisplayMobile">Usuário</h3>
+            <div class="status">
+              <i class="fas fa-circle"></i> Online
+            </div>
+          </div>
+        </div>
+        
+        <form class="profile-form" id="profileFormMobile">
+          <div class="form-group">
+            <label for="userNameMobile">Nome/Nickname:</label>
+            <input type="text" id="userNameMobile" required minlength="3" placeholder="Digite seu nome">
+          </div>
+          
+          <div class="form-group">
+            <label for="userAgeMobile">Idade (min 16):</label>
+            <input type="number" id="userAgeMobile" required min="16" max="100" value="18">
+          </div>
+          
+          <div class="form-group">
+            <label for="userGenderMobile">Gênero:</label>
+            <select id="userGenderMobile">
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outro">Outro</option>
+              <option value="prefiro-nao-dizer">Prefiro não dizer</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="userStatusMobile">Estado Civil:</label>
+            <select id="userStatusMobile">
+              <option value="solteiro">Solteiro(a)</option>
+              <option value="casado">Casado(a)</option>
+              <option value="divorciado">Divorciado(a)</option>
+              <option value="viuvo">Viúvo(a)</option>
+              <option value="uniao-estavel">União Estável</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="userNeighborhoodMobile">Bairro (Rondonópolis):</label>
+            <input type="text" id="userNeighborhoodMobile" placeholder="Ex: Vila Aurora">
+          </div>
+          
+          <button type="submit" class="save-profile">Salvar Perfil</button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Página de usuários (mobile) -->
+    <div class="mobile-page" id="mobileUsersPage">
+      <div class="chat-header">
+        <div class="chat-title">
+          <i class="fas fa-users"></i>
+          <h1>USUÁRIOS ONLINE</h1>
+        </div>
+        <button class="control-btn" id="backToChatBtn2">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+      
+      <div class="users-list" style="flex: 1;">
+        <div id="usersListMobile">
+          <!-- Lista de usuários será carregada aqui -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Área de entrada de mensagens (fixa no mobile) -->
+    <div class="chat-input-area mobile-only" id="mobileChatInput">
+      <div class="input-container">
+        <button class="emoji-btn" id="emojiBtnMobile" title="Emojis">
+          <i class="far fa-smile"></i>
+        </button>
+        
+        <button class="image-btn" id="imageBtnMobile" title="Enviar imagem">
+          <i class="far fa-image"></i>
+        </button>
+        
+        <textarea class="message-input" id="messageInputMobile" placeholder="Digite sua mensagem..." rows="1"></textarea>
+        
+        <button class="send-btn" id="sendBtnMobile" title="Enviar mensagem">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      
+      <!-- Seletor de emojis para mobile -->
+      <div class="emoji-picker-container" id="emojiPickerMobile">
+        <!-- Emojis serão carregados aqui via JavaScript -->
+      </div>
+    </div>
+    
+    <!-- Menu inferior (mobile) -->
+    <div class="mobile-menu">
+      <button class="mobile-menu-btn active" data-page="chat">
+        <i class="fas fa-comments"></i>
+        <span>Chat</span>
+      </button>
+      <button class="mobile-menu-btn" data-page="users">
+        <i class="fas fa-users"></i>
+        <span>Usuários</span>
+      </button>
+      <button class="mobile-menu-btn" data-page="profile">
+        <i class="fas fa-user-circle"></i>
+        <span>Perfil</span>
+      </button>
+      <button class="mobile-menu-btn" data-page="services">
+        <i class="fas fa-tools"></i>
+        <span>Serviços</span>
+      </button>
+    </div>
+    
+    <!-- Botão flutuante para novo chat (mobile) -->
+    <button class="floating-action-btn" id="newChatBtnMobile" title="Nova mensagem">
+      <i class="fas fa-edit"></i>
+    </button>
+    
+    <!-- Botão flutuante do WhatsApp (adicional, fixo no canto) -->
+    <a href="https://wa.link/rloc2t" target="_blank" class="whatsapp-float">
+      <div class="whatsapp-float-button">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+    </a>
+  </div>
+  
+  <!-- Modal para visualizar imagens -->
+  <div class="image-modal" id="imageModal">
+    <span class="close-modal" id="closeModal">&times;</span>
+    <img class="image-modal-content" id="modalImage">
+  </div>
+  
+  <!-- Modal de configurações -->
+  <div class="settings-modal" id="settingsModal">
+    <div class="settings-content">
+      <span class="close-settings" id="closeSettings">&times;</span>
+      <h2>Configurações do Chat</h2>
+      
+      <div class="settings-option">
+        <span>Tamanho da fonte:</span>
+        <div class="font-size-controls">
+          <button class="font-btn" id="decreaseFont">A-</button>
+          <span id="currentFontSize">16px</span>
+          <button class="font-btn" id="increaseFont">A+</button>
+        </div>
+      </div>
+      
+      <div class="settings-option">
+        <span>Tema:</span>
+        <div class="theme-options">
+          <button class="theme-btn active" data-theme="dark">Escuro</button>
+          <button class="theme-btn" data-theme="light">Claro</button>
+          <button class="theme-btn" data-theme="auto">Automático</button>
+        </div>
+      </div>
+      
+      <div class="settings-option">
+        <span>Som de notificação:</span>
+        <input type="checkbox" id="soundToggle" checked>
+      </div>
+      
+      <div class="settings-option">
+        <span>Salvar configurações:</span>
+        <input type="checkbox" id="autoSaveToggle" checked>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Input oculto para selecionar imagem -->
+  <input type="file" id="imageUpload" accept="image/jpeg,image/png" style="display: none;">
+  
+  <script>
+    // Detectar se é mobile ou PC
+    function detectDevice() {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile || window.innerWidth <= 768) {
+        document.body.classList.remove('pc');
+        document.body.classList.add('mobile');
+        document.getElementById('pcLayout').style.display = 'none';
+        document.getElementById('mobileLayout').style.display = 'flex';
+        return 'mobile';
+      } else {
+        document.body.classList.remove('mobile');
+        document.body.classList.add('pc');
+        document.getElementById('pcLayout').style.display = 'flex';
+        document.getElementById('mobileLayout').style.display = 'none';
+        return 'pc';
+      }
+    }
+    
+    // Dados do usuário atual
+    const currentUser = {
+      id: generateUserId(),
+      name: "Usuário",
+      age: 18,
+      gender: "masculino",
+      status: "solteiro",
+      neighborhood: "",
+      avatar: "https://ui-avatars.com/api/?name=Usuario&background=ff0000&color=fff",
+      online: true
+    };
+    
+    // Lista de usuários simulada
+    const users = [
+      {
+        id: generateUserId(),
+        name: "João Silva",
+        age: 25,
+        gender: "masculino",
+        status: "solteiro",
+        neighborhood: "Vila Aurora",
+        avatar: "https://ui-avatars.com/api/?name=Joao+Silva&background=007bff&color=fff",
+        online: true
+      },
+      {
+        id: generateUserId(),
+        name: "Maria Santos",
+        age: 22,
+        gender: "feminino",
+        status: "casado",
+        neighborhood: "Jardim Ipiranga",
+        avatar: "https://ui-avatars.com/api/?name=Maria+Santos&background=e91e63&color=fff",
+        online: true
+      },
+      {
+        id: generateUserId(),
+        name: "Carlos Oliveira",
+        age: 30,
+        gender: "masculino",
+        status: "casado",
+        neighborhood: "Vila Operária",
+        avatar: "https://ui-avatars.com/api/?name=Carlos+Oliveira&background=4caf50&color=fff",
+        online: false
+      },
+      {
+        id: generateUserId(),
+        name: "Ana Costa",
+        age: 19,
+        gender: "feminino",
+        status: "solteiro",
+        neighborhood: "Jardim Novo Horizonte",
+        avatar: "https://ui-avatars.com/api/?name=Ana+Costa&background=9c27b0&color=fff",
+        online: true
+      }
+    ];
+    
+    // Variáveis para controle do chat
+    let isPrivateChat = false;
+    let privateChatWith = null;
+    let pendingPrivateRequest = null;
+    let fontSize = 16;
+    let currentTheme = 'dark';
+    let currentDevice = detectDevice();
+    
+    // Elementos do DOM
+    let servicesBanner, sidebar, chatMessages, messageInput, sendBtn, emojiBtn, emojiPicker;
+    let imageBtn, imageUpload, profileForm, profilePicContainer, profilePic, userNameDisplay;
+    let usersList, onlineCount, privateChatRequest, privateRequestText;
+    let acceptPrivateBtn, rejectPrivateBtn, fullscreenBtn, settingsBtn;
+    let settingsModal, closeSettingsBtn, decreaseFontBtn, increaseFontBtn;
+    let currentFontSize, themeButtons, imageModal, modalImage, closeModalBtn;
+    
+    // Emojis para o seletor
+    const emojis = ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '😘', '🥰', '😗', '😙', '😚', '🙂', '🤗', '🤩', '🤔', '🤨', '😐', '😑', '😶', '🙄', '😏', '😣', '😥', '😮', '🤐', '😯', '😪', '😫', '🥱', '😴', '😌', '😛', '😜', '😝', '🤤', '😒', '😓', '😔', '😕', '🙃', '🤑', '😲', '☹️', '🙁', '😖', '😞', '😟', '😤', '😢', '😭', '😦', '😧', '😨', '😩', '🤯', '😬', '😰', '😱', '🥵', '🥶', '😳', '🤪', '😵', '😠', '🤬', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '😇', '🥳', '🥸', '🤠', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃'];
+    
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      // Detectar dispositivo e configurar elementos
+      currentDevice = detectDevice();
+      setupElementsForDevice();
+      
+      // Carregar configurações salvas
+      loadSettings();
+      
+      // Inicializar lista de usuários
+      renderUsersList();
+      
+      // Configurar eventos do banner de serviços
+      startBannerAnimation();
+      
+      // Adicionar eventos
+      setupEventListeners();
+      
+      // Inicializar seletor de emojis
+      initEmojiPicker();
+      
+      // Configurar PWA
+      setupPWA();
+      
+      // Adicionar mensagens iniciais ao chat
+      addSystemMessage("Bem-vindo ao chat da Rondonópolis Store!");
+      addSystemMessage("Aqui você pode conversar com outros clientes e tirar dúvidas sobre nossos serviços.");
+      addSystemMessage(`Lembre-se: ${formatServicesMessage()}`);
+      
+      // Simular mensagens de outros usuários
+      setTimeout(() => {
+        addMessage(users[0], "Olá pessoal! Alguém já utilizou os serviços de formatação da loja?");
+      }, 1000);
+      
+      setTimeout(() => {
+        addMessage(users[1], "Sim, eu formatei meu notebook aqui. Ficou excelente e rápido!");
+      }, 3000);
+      
+      // Redimensionar a janela
+      window.addEventListener('resize', () => {
+        currentDevice = detectDevice();
+        setupElementsForDevice();
+      });
+      
+      // Ajustar visibilidade do container do WhatsApp quando o banner desaparecer
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.attributeName === 'class') {
+            const whatsappContainer = document.querySelector('.whatsapp-container');
+            if (servicesBanner.classList.contains('hidden')) {
+              // Se o banner estiver oculto, escondemos também o container do WhatsApp
+              whatsappContainer.style.display = 'none';
+            } else {
+              whatsappContainer.style.display = 'block';
+            }
+          }
+        });
+      });
+      
+      if (servicesBanner) {
+        observer.observe(servicesBanner, { attributes: true });
+      }
+    });
+    
+    // Configurar elementos baseado no dispositivo
+    function setupElementsForDevice() {
+      if (currentDevice === 'pc') {
+        servicesBanner = document.getElementById('servicesBanner');
+        chatMessages = document.getElementById('chatMessages');
+        messageInput = document.getElementById('messageInput');
+        sendBtn = document.getElementById('sendBtn');
+        emojiBtn = document.getElementById('emojiBtn');
+        emojiPicker = document.getElementById('emojiPicker');
+        imageBtn = document.getElementById('imageBtn');
+        profileForm = document.getElementById('profileForm');
+        profilePicContainer = document.getElementById('profilePicContainer');
+        profilePic = document.getElementById('profilePic');
+        userNameDisplay = document.getElementById('userNameDisplay');
+        usersList = document.getElementById('usersList');
+        onlineCount = document.getElementById('onlineCount');
+        privateChatRequest = document.getElementById('privateChatRequest');
+        privateRequestText = document.getElementById('privateRequestText');
+        acceptPrivateBtn = document.getElementById('acceptPrivateBtn');
+        rejectPrivateBtn = document.getElementById('rejectPrivateBtn');
+        fullscreenBtn = document.getElementById('fullscreenBtn');
+        settingsBtn = document.getElementById('settingsBtn');
+        settingsModal = document.getElementById('settingsModal');
+        closeSettingsBtn = document.getElementById('closeSettings');
+        decreaseFontBtn = document.getElementById('decreaseFont');
+        increaseFontBtn = document.getElementById('increaseFont');
+        currentFontSize = document.getElementById('currentFontSize');
+        themeButtons = document.querySelectorAll('.theme-btn');
+        imageModal = document.getElementById('imageModal');
+        modalImage = document.getElementById('modalImage');
+        closeModalBtn = document.getElementById('closeModal');
+      } else {
+        servicesBanner = document.getElementById('servicesBannerMobile');
+        chatMessages = document.getElementById('chatMessagesMobile');
+        messageInput = document.getElementById('messageInputMobile');
+        sendBtn = document.getElementById('sendBtnMobile');
+        emojiBtn = document.getElementById('emojiBtnMobile');
+        emojiPicker = document.getElementById('emojiPickerMobile');
+        imageBtn = document.getElementById('imageBtnMobile');
+        profileForm = document.getElementById('profileFormMobile');
+        profilePicContainer = document.getElementById('profilePicContainerMobile');
+        profilePic = document.getElementById('profilePicMobile');
+        userNameDisplay = document.getElementById('userNameDisplayMobile');
+        usersList = document.getElementById('usersListMobile');
+        onlineCount = document.getElementById('onlineCount');
+        privateChatRequest = document.getElementById('privateChatRequestMobile');
+        privateRequestText = document.getElementById('privateRequestTextMobile');
+        acceptPrivateBtn = document.getElementById('acceptPrivateBtnMobile');
+        rejectPrivateBtn = document.getElementById('rejectPrivateBtnMobile');
+        fullscreenBtn = document.getElementById('fullscreenBtnMobile');
+        settingsBtn = document.getElementById('settingsBtnMobile');
+      }
+    }
+    
+    // Iniciar animação do banner de serviços
+    function startBannerAnimation() {
+      let isVisible = true;
+      
+      setInterval(() => {
+        isVisible = !isVisible;
+        
+        if (isVisible) {
+          servicesBanner.classList.remove('hidden');
+          // Mostrar também o container do WhatsApp
+          document.querySelectorAll('.whatsapp-container').forEach(container => {
+            container.style.display = 'block';
+          });
+        } else {
+          servicesBanner.classList.add('hidden');
+          // Esconder também o container do WhatsApp
+          document.querySelectorAll('.whatsapp-container').forEach(container => {
+            container.style.display = 'none';
+          });
+        }
+      }, 10000); // Alterna a cada 10 segundos
+    }
+    
+    // Formatar mensagem de serviços para exibição
+    function formatServicesMessage() {
+      return "FORMATAÇÃO DE COMPUTADORES por R$80,00 com instalação do Windows + Office ativados!";
+    }
+    
+    // Configurar PWA
+    function setupPWA() {
+      // Registrar Service Worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js")
+          .then(() => console.log("PWA ativo"))
+          .catch(err => console.log("Erro SW", err));
+      }
+      
+      // Botão de instalação para PC
+      let deferredPromptPc;
+      const installBtnPc = document.getElementById("installBtnPc");
+      
+      window.addEventListener("beforeinstallprompt", e => {
+        e.preventDefault();
+        deferredPromptPc = e;
+        if (installBtnPc) installBtnPc.style.display = "block";
+        
+        // Para mobile também
+        const installBtnMobile = document.getElementById("installBtnMobile");
+        if (installBtnMobile) installBtnMobile.style.display = "block";
+      });
+      
+      if (installBtnPc) {
+        installBtnPc.addEventListener("click", () => {
+          if (deferredPromptPc) {
+            deferredPromptPc.prompt();
+            deferredPromptPc.userChoice.then(() => {
+              deferredPromptPc = null;
+              installBtnPc.style.display = "none";
+            });
+          }
+        });
+      }
+      
+      // Botão de instalação para mobile
+      const installBtnMobile = document.getElementById("installBtnMobile");
+      if (installBtnMobile) {
+        installBtnMobile.addEventListener("click", () => {
+          if (deferredPromptPc) {
+            deferredPromptPc.prompt();
+            deferredPromptPc.userChoice.then(() => {
+              deferredPromptPc = null;
+              installBtnMobile.style.display = "none";
+            });
+          }
+        });
+      }
+    }
+    
+    // Configurar todos os event listeners
+    function setupEventListeners() {
+      // Botão de tela cheia
+      fullscreenBtn.addEventListener('click', toggleFullscreen);
+      
+      // Botão de configurações
+      settingsBtn.addEventListener('click', () => {
+        settingsModal.classList.add('show');
+      });
+      
+      // Fechar modal de configurações
+      closeSettingsBtn.addEventListener('click', () => {
+        settingsModal.classList.remove('show');
+      });
+      
+      // Fechar modal ao clicar fora
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+          settingsModal.classList.remove('show');
+        }
+      });
+      
+      // Formulário de perfil
+      profileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveProfile();
+      });
+      
+      // Alterar foto de perfil
+      profilePicContainer.addEventListener('click', () => {
+        imageUpload.click();
+      });
+      
+      // Upload de imagem de perfil
+      imageUpload.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            profilePic.src = event.target.result;
+            currentUser.avatar = event.target.result;
+            saveToLocalStorage('userAvatar', event.target.result);
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      });
+      
+      // Enviar mensagem
+      sendBtn.addEventListener('click', sendMessage);
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      
+      // Ajustar altura do textarea
+      messageInput.addEventListener('input', () => {
+        messageInput.style.height = 'auto';
+        messageInput.style.height = (messageInput.scrollHeight) + 'px';
+      });
+      
+      // Botão de emojis
+      emojiBtn.addEventListener('click', () => {
+        emojiPicker.classList.toggle('show');
+      });
+      
+      // Fechar seletor de emojis ao clicar fora
+      document.addEventListener('click', (e) => {
+        if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+          emojiPicker.classList.remove('show');
+        }
+      });
+      
+      // Botão de enviar imagem
+      imageBtn.addEventListener('click', () => {
+        imageUpload.click();
+      });
+      
+      // Upload de imagem para o chat
+      imageUpload.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            sendImage(event.target.result);
+          };
+          reader.readAsDataURL(e.target.files[0]);
+          imageUpload.value = '';
+        }
+      });
+      
+      // Visualizar imagem em tamanho grande
+      closeModalBtn.addEventListener('click', () => {
+        imageModal.classList.remove('show');
+      });
+      
+      // Fechar modal de imagem ao clicar fora
+      imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) {
+          imageModal.classList.remove('show');
+        }
+      });
+      
+      // Aceitar chat privado
+      acceptPrivateBtn.addEventListener('click', acceptPrivateChat);
+      
+      // Recusar chat privado
+      rejectPrivateBtn.addEventListener('click', rejectPrivateChat);
+      
+      // Controles de tamanho da fonte
+      decreaseFontBtn.addEventListener('click', () => {
+        if (fontSize > 12) {
+          fontSize--;
+          updateFontSize();
+        }
+      });
+      
+      increaseFontBtn.addEventListener('click', () => {
+        if (fontSize < 24) {
+          fontSize++;
+          updateFontSize();
+        }
+      });
+      
+      // Controles de tema
+      themeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          themeButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentTheme = btn.dataset.theme;
+          applyTheme();
+          saveToLocalStorage('chatTheme', currentTheme);
+        });
+      });
+      
+      // Menu mobile
+      if (currentDevice === 'mobile') {
+        setupMobileMenu();
+      }
+    }
+    
+    // Configurar menu mobile
+    function setupMobileMenu() {
+      const menuButtons = document.querySelectorAll('.mobile-menu-btn');
+      const mobilePages = document.querySelectorAll('.mobile-page');
+      const backToChatBtn = document.getElementById('backToChatBtn');
+      const backToChatBtn2 = document.getElementById('backToChatBtn2');
+      const newChatBtnMobile = document.getElementById('newChatBtnMobile');
+      
+      menuButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const page = btn.getAttribute('data-page');
+          
+          // Atualizar botões ativos
+          menuButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Mostrar página correspondente
+          mobilePages.forEach(p => p.classList.remove('active'));
+          document.getElementById(`mobile${page.charAt(0).toUpperCase() + page.slice(1)}Page`).classList.add('active');
+          
+          // Mostrar/ocultar área de entrada de mensagens
+          const chatInput = document.getElementById('mobileChatInput');
+          if (page === 'chat') {
+            chatInput.style.display = 'block';
+          } else {
+            chatInput.style.display = 'none';
+          }
+          
+          // Se for página de serviços, mostrar banner completo
+          if (page === 'services') {
+            document.getElementById('servicesBannerMobile').classList.remove('hidden');
+            // Mostrar também o container do WhatsApp
+            document.querySelector('.whatsapp-container').style.display = 'block';
+          }
+        });
+      });
+      
+      // Botões de voltar
+      if (backToChatBtn) {
+        backToChatBtn.addEventListener('click', () => {
+          menuButtons.forEach(b => b.classList.remove('active'));
+          menuButtons[0].classList.add('active');
+          mobilePages.forEach(p => p.classList.remove('active'));
+          document.getElementById('mobileChatPage').classList.add('active');
+          document.getElementById('mobileChatInput').style.display = 'block';
+        });
+      }
+      
+      if (backToChatBtn2) {
+        backToChatBtn2.addEventListener('click', () => {
+          menuButtons.forEach(b => b.classList.remove('active'));
+          menuButtons[0].classList.add('active');
+          mobilePages.forEach(p => p.classList.remove('active'));
+          document.getElementById('mobileChatPage').classList.add('active');
+          document.getElementById('mobileChatInput').style.display = 'block';
+        });
+      }
+      
+      // Botão flutuante para nova mensagem
+      if (newChatBtnMobile) {
+        newChatBtnMobile.addEventListener('click', () => {
+          messageInput.focus();
+        });
+      }
+    }
+    
+    // Inicializar seletor de emojis
+    function initEmojiPicker() {
+      emojis.forEach(emoji => {
+        const emojiSpan = document.createElement('span');
+        emojiSpan.textContent = emoji;
+        emojiSpan.style.cursor = 'pointer';
+        emojiSpan.style.display = 'inline-block';
+        
+        emojiSpan.addEventListener('click', () => {
+          messageInput.value += emoji;
+          messageInput.focus();
+          emojiPicker.classList.remove('show');
+        });
+        
+        emojiPicker.appendChild(emojiSpan);
+      });
+    }
+    
+    // Renderizar lista de usuários
+    function renderUsersList() {
+      usersList.innerHTML = '';
+      
+      // Adicionar usuário atual no início (apenas no PC)
+      if (currentDevice === 'pc') {
+        const currentUserElement = createUserElement(currentUser, true);
+        usersList.appendChild(currentUserElement);
+      }
+      
+      // Adicionar outros usuários
+      users.forEach(user => {
+        if (user.id !== currentUser.id) {
+          const userElement = createUserElement(user);
+          usersList.appendChild(userElement);
+        }
+      });
+      
+      // Atualizar contador de usuários online
+      const onlineUsers = users.filter(user => user.online).length + 1;
+      if (onlineCount) onlineCount.textContent = onlineUsers;
+    }
+    
+    // Criar elemento de usuário para a lista
+    function createUserElement(user, isCurrentUser = false) {
+      const userElement = document.createElement('div');
+      userElement.className = 'user-item';
+      if (isCurrentUser) userElement.classList.add('active');
+      
+      userElement.innerHTML = `
+        <img src="${user.avatar}" alt="${user.name}" class="avatar">
+        <div class="user-info">
+          <div class="user-name">${user.name} ${isCurrentUser ? '(Você)' : ''}</div>
+          <div class="user-status">
+            <span class="status-dot ${user.online ? 'online' : ''}"></span>
+            ${user.online ? 'Online' : 'Offline'} | ${user.age} anos
+          </div>
+        </div>
+        ${!isCurrentUser ? '<button class="private-chat-btn" title="Chat privado"><i class="fas fa-comment-dots"></i></button>' : ''}
+      `;
+      
+      // Adicionar evento de clique para iniciar chat privado
+      if (!isCurrentUser) {
+        const privateBtn = userElement.querySelector('.private-chat-btn');
+        privateBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          requestPrivateChat(user);
+        });
+      }
+      
+      return userElement;
+    }
+    
+    // Salvar perfil do usuário
+    function saveProfile() {
+      currentUser.name = currentDevice === 'pc' ? 
+        document.getElementById('userName').value : 
+        document.getElementById('userNameMobile').value;
+      
+      currentUser.age = parseInt(currentDevice === 'pc' ? 
+        document.getElementById('userAge').value : 
+        document.getElementById('userAgeMobile').value);
+      
+      currentUser.gender = currentDevice === 'pc' ? 
+        document.getElementById('userGender').value : 
+        document.getElementById('userGenderMobile').value;
+      
+      currentUser.status = currentDevice === 'pc' ? 
+        document.getElementById('userStatus').value : 
+        document.getElementById('userStatusMobile').value;
+      
+      currentUser.neighborhood = currentDevice === 'pc' ? 
+        document.getElementById('userNeighborhood').value : 
+        document.getElementById('userNeighborhoodMobile').value;
+      
+      userNameDisplay.textContent = currentUser.name;
+      profilePic.src = currentUser.avatar;
+      
+      // Atualizar na lista de usuários
+      renderUsersList();
+      
+      // Salvar no localStorage
+      saveToLocalStorage('userProfile', currentUser);
+      
+      // Adicionar mensagem de sistema
+      addSystemMessage(`Perfil atualizado: ${currentUser.name} entrou no chat!`);
+      
+      console.log('Perfil salvo:', currentUser);
+    }
+    
+    // Enviar mensagem
+    function sendMessage() {
+      const messageText = messageInput.value.trim();
+      
+      if (messageText === '') return;
+      
+      // Adicionar mensagem ao chat
+      addMessage(currentUser, messageText);
+      
+      // Limpar campo de entrada
+      messageInput.value = '';
+      messageInput.style.height = 'auto';
+      
+      console.log('Mensagem enviada:', messageText);
+      
+      // Simular resposta de outros usuários
+      if (!isPrivateChat && Math.random() > 0.5) {
+        const randomUser = users.filter(u => u.online && u.id !== currentUser.id)[0];
+        if (randomUser) {
+          setTimeout(() => {
+            const responses = [
+              "Interessante!",
+              "Concordo com você!",
+              "Alguém mais tem experiência com esses serviços?",
+              "Vou considerar isso, obrigado!",
+              "Alguém sabe se atendem também no bairro Jardim das Flores?"
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage(randomUser, randomResponse);
+          }, 1000 + Math.random() * 2000);
+        }
+      }
+    }
+    
+    // Enviar imagem
+    function sendImage(imageData) {
+      addMessage(currentUser, '', imageData);
+      console.log('Imagem enviada');
+    }
+    
+    // Adicionar mensagem ao chat
+    function addMessage(user, text, image = null) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${user.id === currentUser.id ? 'own-message' : ''}`;
+      
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      messageDiv.innerHTML = `
+        <img src="${user.avatar}" alt="${user.name}" class="message-avatar">
+        <div class="message-content">
+          <div class="message-sender">${user.name}</div>
+          <div class="message-bubble">
+            ${text}
+            ${image ? `<img src="${image}" alt="Imagem enviada" class="chat-image" style="max-width: 200px; cursor: pointer;">` : ''}
+          </div>
+          <div class="message-time">${time}</div>
+        </div>
+      `;
+      
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // Adicionar evento para visualizar imagem em tamanho grande
+      if (image) {
+        const imgElement = messageDiv.querySelector('.chat-image');
+        imgElement.addEventListener('click', () => {
+          modalImage.src = image;
+          imageModal.classList.add('show');
+        });
+      }
+    }
+    
+    // Adicionar mensagem de sistema
+    function addSystemMessage(text) {
+      const systemDiv = document.createElement('div');
+      systemDiv.className = 'system-message';
+      systemDiv.textContent = text;
+      chatMessages.appendChild(systemDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Solicitar chat privado
+    function requestPrivateChat(user) {
+      if (isPrivateChat) {
+        alert('Você já está em um chat privado. Termine a conversa atual antes de iniciar outra.');
+        return;
+      }
+      
+      pendingPrivateRequest = user;
+      privateRequestText.textContent = `${user.name} deseja iniciar um chat privado com você. Aceitar?`;
+      privateChatRequest.style.display = 'block';
+      
+      console.log(`Solicitação de chat privado enviada para ${user.name}`);
+    }
+    
+    // Aceitar chat privado
+    function acceptPrivateChat() {
+      if (!pendingPrivateRequest) return;
+      
+      isPrivateChat = true;
+      privateChatWith = pendingPrivateRequest;
+      privateChatRequest.style.display = 'none';
+      
+      // Limpar mensagens do chat público
+      chatMessages.innerHTML = '';
+      
+      addSystemMessage(`Chat privado iniciado com ${privateChatWith.name}`);
+      addSystemMessage('As mensagens aqui são visíveis apenas para vocês dois.');
+      addSystemMessage('Para voltar ao chat público, recuse a próxima solicitação de chat privado.');
+      
+      console.log(`Chat privado aceito com ${privateChatWith.name}`);
+    }
+    
+    // Recusar chat privado
+    function rejectPrivateChat() {
+      if (isPrivateChat) {
+        // Se já está em um chat privado, voltar ao chat público
+        isPrivateChat = false;
+        privateChatWith = null;
+        
+        // Limpar mensagens do chat privado
+        chatMessages.innerHTML = '';
+        
+        addSystemMessage('Você voltou ao chat público.');
+        addSystemMessage(`Bem-vindo de volta, ${currentUser.name}!`);
+      }
+      
+      privateChatRequest.style.display = 'none';
+      pendingPrivateRequest = null;
+      
+      console.log('Chat privado recusado/encerrado');
+    }
+    
+    // Alternar tela cheia
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Erro ao tentar entrar em tela cheia: ${err.message}`);
+        });
+        if (fullscreenBtn) fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+          if (fullscreenBtn) fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        }
+      }
+    }
+    
+    // Atualizar tamanho da fonte
+    function updateFontSize() {
+      document.body.style.fontSize = fontSize + 'px';
+      if (currentFontSize) currentFontSize.textContent = fontSize + 'px';
+      saveToLocalStorage('chatFontSize', fontSize);
+    }
+    
+    // Aplicar tema
+    function applyTheme() {
+      if (currentTheme === 'light') {
+        document.body.style.backgroundColor = '#f5f5f5';
+        document.body.style.color = '#333';
+      } else {
+        document.body.style.backgroundColor = '#0d0d0d';
+        document.body.style.color = '#f5f5f5';
+      }
+    }
+    
+    // Carregar configurações salvas
+    function loadSettings() {
+      // Carregar perfil do usuário
+      const savedProfile = getFromLocalStorage('userProfile');
+      if (savedProfile) {
+        Object.assign(currentUser, savedProfile);
+        
+        if (currentDevice === 'pc') {
+          document.getElementById('userName').value = currentUser.name;
+          document.getElementById('userAge').value = currentUser.age;
+          document.getElementById('userGender').value = currentUser.gender;
+          document.getElementById('userStatus').value = currentUser.status;
+          document.getElementById('userNeighborhood').value = currentUser.neighborhood;
+        } else {
+          document.getElementById('userNameMobile').value = currentUser.name;
+          document.getElementById('userAgeMobile').value = currentUser.age;
+          document.getElementById('userGenderMobile').value = currentUser.gender;
+          document.getElementById('userStatusMobile').value = currentUser.status;
+          document.getElementById('userNeighborhoodMobile').value = currentUser.neighborhood;
+        }
+        
+        profilePic.src = currentUser.avatar;
+        userNameDisplay.textContent = currentUser.name;
+      }
+      
+      // Carregar tamanho da fonte
+      const savedFontSize = getFromLocalStorage('chatFontSize');
+      if (savedFontSize) {
+        fontSize = savedFontSize;
+        updateFontSize();
+      }
+      
+      // Carregar tema
+      const savedTheme = getFromLocalStorage('chatTheme');
+      if (savedTheme) {
+        currentTheme = savedTheme;
+        if (themeButtons) {
+          themeButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === currentTheme);
+          });
+        }
+        applyTheme();
+      }
+    }
+    
+    // Funções auxiliares
+    function generateUserId() {
+      return 'user_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    function saveToLocalStorage(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.error('Erro ao salvar no localStorage:', e);
+      }
+    }
+    
+    function getFromLocalStorage(key) {
+      try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : null;
+      } catch (e) {
+        console.error('Erro ao ler do localStorage:', e);
+        return null;
+      }
+    }
+  </script>
+</body>
+</html>
