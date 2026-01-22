@@ -48,12 +48,52 @@
       color: var(--light-text);
       transition: background 0.3s;
       overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    /* Vídeo de fundo */
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .video-background video {
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      opacity: 0.15; /* Tom suave que não atrapalha a leitura */
+      filter: brightness(0.4) contrast(1.2);
+    }
+    
+    /* Overlay escuro sobre o vídeo */
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
     }
     
     /* Layout para PC */
     .pc-layout {
       display: flex;
       min-height: 100vh;
+      position: relative;
+      z-index: 1;
     }
     
     /* Layout para Mobile */
@@ -61,16 +101,19 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      position: relative;
+      z-index: 1;
     }
     
     /* Painel lateral para PC */
     .sidebar-pc {
       width: 350px;
-      background-color: var(--card-bg);
-      border-right: 1px solid #333;
+      background-color: rgba(26, 26, 26, 0.85);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      backdrop-filter: blur(10px);
     }
     
     /* Conteúdo principal */
@@ -83,7 +126,7 @@
     
     /* Banner de serviços */
     .services-banner {
-      background: linear-gradient(to right, #0d0d0d, #1a1a1a);
+      background: linear-gradient(to right, rgba(13, 13, 13, 0.9), rgba(26, 26, 26, 0.9));
       color: white;
       padding: 15px;
       text-align: center;
@@ -92,6 +135,7 @@
       position: relative;
       z-index: 10;
       transition: opacity 0.5s ease-in-out;
+      backdrop-filter: blur(5px);
     }
     
     .services-banner.hidden {
@@ -119,13 +163,14 @@
       font-weight: bold;
     }
     
-    /* Container do botão do WhatsApp - AGORA ABAIXO DO BANNER */
+    /* Container do botão do WhatsApp - ABAIXO DO BANNER */
     .whatsapp-container {
-      background-color: rgba(26, 26, 26, 0.9);
+      background-color: rgba(26, 26, 26, 0.85);
       padding: 10px 15px;
       text-align: center;
       border-bottom: 2px solid var(--whatsapp-green);
       z-index: 9;
+      backdrop-filter: blur(5px);
     }
     
     .whatsapp-button {
@@ -224,12 +269,13 @@
     
     /* Cabeçalho do chat */
     .chat-header {
-      background-color: var(--secondary-color);
+      background-color: rgba(44, 62, 80, 0.9);
       color: var(--light-text);
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      backdrop-filter: blur(5px);
     }
     
     .chat-title {
@@ -281,7 +327,8 @@
       padding: 25px;
       text-align: center;
       background-color: rgba(0, 0, 0, 0.7);
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
     }
     
     .pwa-installer h3 {
@@ -320,25 +367,21 @@
       background: var(--primary-color);
       color: var(--light-text);
       width: 100%;
-      margin-bottom: 10px;
     }
     
-    .btn-site {
-      background: #333;
-      color: var(--light-text);
-      width: 100%;
-    }
-    
-    .btn-install:hover, .btn-site:hover {
+    .btn-install:hover {
       opacity: 0.9;
       transform: translateY(-2px);
     }
+    
+    /* REMOVIDO: .btn-site - Botão "Acessar Site" removido conforme solicitado */
     
     /* Perfil do usuário */
     .user-profile {
       padding: 20px;
       background-color: rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
     }
     
     .profile-header {
@@ -356,6 +399,7 @@
       overflow: hidden;
       border: 3px solid var(--primary-color);
       cursor: pointer;
+      background-color: #222;
     }
     
     .mobile .profile-pic-container {
@@ -421,11 +465,12 @@
     
     .form-group input, .form-group select {
       padding: 10px 12px;
-      border: 1px solid #444;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 5px;
       font-size: 0.95rem;
-      background-color: #222;
+      background-color: rgba(34, 34, 34, 0.8);
       color: white;
+      backdrop-filter: blur(5px);
     }
     
     .mobile .form-group input, .mobile .form-group select {
@@ -458,8 +503,21 @@
     .users-list h3 {
       margin-bottom: 15px;
       padding-bottom: 10px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       color: #ccc;
+    }
+    
+    .empty-users-message {
+      text-align: center;
+      padding: 30px 20px;
+      color: #888;
+      font-style: italic;
+    }
+    
+    .empty-users-message i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #555;
     }
     
     .user-item {
@@ -472,6 +530,12 @@
       transition: background 0.2s;
       margin-bottom: 8px;
       background-color: rgba(255, 255, 255, 0.05);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .user-item:hover {
@@ -487,6 +551,7 @@
       height: 40px;
       border-radius: 50%;
       object-fit: cover;
+      background-color: #333;
     }
     
     .mobile .user-item .avatar {
@@ -525,6 +590,13 @@
     
     .user-item .status-dot.online {
       background-color: var(--online-color);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
     }
     
     .private-chat-btn {
@@ -533,6 +605,12 @@
       color: var(--primary-color);
       cursor: pointer;
       font-size: 1.2rem;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    
+    .private-chat-btn:hover {
+      opacity: 1;
     }
     
     /* Área do chat */
@@ -540,14 +618,15 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background-color: #111;
+      background-color: rgba(17, 17, 17, 0.85);
+      backdrop-filter: blur(5px);
     }
     
     .chat-messages {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
-      background-color: #0a0a0a;
+      background-color: rgba(10, 10, 10, 0.7);
     }
     
     .mobile .chat-messages {
@@ -558,6 +637,7 @@
       display: flex;
       gap: 10px;
       margin-bottom: 20px;
+      animation: fadeIn 0.3s ease-out;
     }
     
     .message.own-message {
@@ -570,6 +650,7 @@
       border-radius: 50%;
       object-fit: cover;
       align-self: flex-end;
+      background-color: #333;
     }
     
     .mobile .message-avatar {
@@ -597,16 +678,17 @@
     .message-bubble {
       padding: 12px 15px;
       border-radius: 18px;
-      background-color: #222;
+      background-color: rgba(34, 34, 34, 0.8);
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       position: relative;
       word-wrap: break-word;
       color: white;
+      backdrop-filter: blur(5px);
     }
     
     .message.own-message .message-bubble {
-      background-color: #2a2a2a;
-      border: 1px solid #444;
+      background-color: rgba(42, 42, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .message-bubble img {
@@ -623,13 +705,14 @@
     
     /* Solicitação de chat privado */
     .private-chat-request {
-      background-color: var(--private-chat-bg);
+      background-color: rgba(255, 248, 225, 0.9);
       border: 1px dashed #ffb300;
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
       text-align: center;
       color: #333;
+      backdrop-filter: blur(5px);
     }
     
     .private-chat-request h4 {
@@ -664,8 +747,9 @@
     /* Área de entrada de mensagens */
     .chat-input-area {
       padding: 15px;
-      border-top: 1px solid #333;
-      background-color: #111;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background-color: rgba(17, 17, 17, 0.85);
+      backdrop-filter: blur(5px);
     }
     
     .mobile .chat-input-area {
@@ -685,6 +769,11 @@
       color: #aaa;
       cursor: pointer;
       padding: 5px;
+      transition: color 0.2s;
+    }
+    
+    .emoji-btn:hover, .image-btn:hover, .send-btn:hover {
+      color: white;
     }
     
     .mobile .emoji-btn, .mobile .image-btn, .mobile .send-btn {
@@ -695,17 +784,22 @@
       color: var(--primary-color);
     }
     
+    .send-btn:hover {
+      color: #ff3333;
+    }
+    
     .message-input {
       flex: 1;
       padding: 12px 15px;
-      border: 1px solid #444;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 25px;
       resize: none;
       font-size: 1rem;
       max-height: 120px;
       overflow-y: auto;
-      background-color: #222;
+      background-color: rgba(34, 34, 34, 0.8);
       color: white;
+      backdrop-filter: blur(5px);
     }
     
     .mobile .message-input {
@@ -722,8 +816,8 @@
       position: absolute;
       bottom: 70px;
       right: 20px;
-      background-color: #222;
-      border: 1px solid #444;
+      background-color: rgba(34, 34, 34, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       padding: 10px;
       display: none;
@@ -732,6 +826,7 @@
       max-height: 200px;
       overflow-y: auto;
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
     }
     
     .emoji-picker-container.show {
@@ -750,7 +845,7 @@
     }
     
     .emoji-picker-container span:hover {
-      background-color: #444;
+      background-color: rgba(255, 255, 255, 0.1);
     }
     
     /* Modal de imagem */
@@ -806,14 +901,15 @@
     }
     
     .settings-content {
-      background-color: #222;
+      background-color: rgba(34, 34, 34, 0.95);
       width: 90%;
       max-width: 500px;
       border-radius: 10px;
       padding: 25px;
       position: relative;
       color: white;
-      border: 1px solid #444;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
     }
     
     .close-settings {
@@ -836,7 +932,7 @@
       align-items: center;
       margin-bottom: 15px;
       padding-bottom: 15px;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .font-size-controls {
@@ -863,8 +959,8 @@
     
     .theme-btn {
       padding: 8px 15px;
-      border: 2px solid #444;
-      background: #333;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(51, 51, 51, 0.8);
       border-radius: 5px;
       cursor: pointer;
       color: white;
@@ -882,10 +978,11 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: #1a1a1a;
-      border-top: 1px solid #333;
+      background-color: rgba(26, 26, 26, 0.9);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       z-index: 100;
       padding: 10px;
+      backdrop-filter: blur(10px);
     }
     
     .mobile.mobile-menu {
@@ -905,6 +1002,11 @@
       padding: 10px;
       flex: 1;
       font-size: 0.8rem;
+      transition: color 0.2s;
+    }
+    
+    .mobile-menu-btn:hover {
+      color: white;
     }
     
     .mobile-menu-btn.active {
@@ -919,7 +1021,7 @@
     .system-message {
       text-align: center;
       margin: 15px 0;
-      color: #777;
+      color: #aaa;
       font-size: 0.9rem;
       font-style: italic;
     }
@@ -931,16 +1033,6 @@
     
     body.fullscreen .container {
       max-width: 100%;
-    }
-    
-    /* Animações */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .message {
-      animation: fadeIn 0.3s ease-out;
     }
     
     /* Esconder elementos não necessários no mobile */
@@ -1047,6 +1139,15 @@
 </head>
 
 <body class="pc">
+  <!-- Vídeo de fundo -->
+  <div class="video-background">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="fundo.mp4" type="video/mp4">
+      Seu navegador não suporta vídeos HTML5.
+    </video>
+  </div>
+  <div class="video-overlay"></div>
+  
   <!-- Layout para PC -->
   <div class="pc-layout" id="pcLayout">
     <!-- Painel lateral (PC) -->
@@ -1055,11 +1156,9 @@
       <div class="pwa-installer pc-only">
         <h3>Mundo Store App</h3>
         <p>Instale nosso aplicativo para acessar mais rápido e receber notificações!</p>
+        <!-- REMOVIDO: Botão "Acessar Site" conforme solicitado -->
         <button class="btn btn-install" id="installBtnPc">
           <i class="fas fa-download"></i> Instalar App
-        </button>
-        <button class="btn btn-site" onclick="location.href='https://mundo-store.github.io'">
-          <i class="fas fa-globe"></i> Acessar Site
         </button>
       </div>
       
@@ -1119,11 +1218,17 @@
         </form>
       </div>
       
-      <!-- Lista de usuários -->
+      <!-- Lista de usuários - COMEÇA VAZIA -->
       <div class="users-list">
-        <h3>Usuários Online (<span id="onlineCount">1</span>)</h3>
+        <h3>Usuários Online (<span id="onlineCount">0</span>)</h3>
         <div id="usersList">
-          <!-- Lista de usuários será carregada aqui -->
+          <!-- Mensagem inicial - sala vazia -->
+          <div class="empty-users-message" id="emptyUsersMessage">
+            <i class="fas fa-users-slash"></i>
+            <p>A sala está vazia. Seja o primeiro a entrar!</p>
+            <p style="font-size: 0.8rem; margin-top: 5px;">Os usuários aparecerão aqui conforme forem entrando.</p>
+          </div>
+          <!-- Lista de usuários será carregada aqui dinamicamente -->
         </div>
       </div>
     </div>
@@ -1235,11 +1340,9 @@
     <div class="pwa-installer mobile-only" id="mobilePwaInstaller">
       <h3>Mundo Store App</h3>
       <p>Instale nosso aplicativo para acesso rápido!</p>
+      <!-- REMOVIDO: Botão "Acessar Site" conforme solicitado -->
       <button class="btn btn-install" id="installBtnMobile">
         <i class="fas fa-download"></i> Instalar App
-      </button>
-      <button class="btn btn-site" onclick="location.href='https://mundo-store.github.io'">
-        <i class="fas fa-globe"></i> Acessar Site
       </button>
     </div>
     
@@ -1347,7 +1450,7 @@
       </div>
     </div>
     
-    <!-- Página de usuários (mobile) -->
+    <!-- Página de usuários (mobile) - COMEÇA VAZIA -->
     <div class="mobile-page" id="mobileUsersPage">
       <div class="chat-header">
         <div class="chat-title">
@@ -1361,7 +1464,13 @@
       
       <div class="users-list" style="flex: 1;">
         <div id="usersListMobile">
-          <!-- Lista de usuários será carregada aqui -->
+          <!-- Mensagem inicial - sala vazia -->
+          <div class="empty-users-message" id="emptyUsersMessageMobile">
+            <i class="fas fa-users-slash"></i>
+            <p>A sala está vazia. Seja o primeiro a entrar!</p>
+            <p style="font-size: 0.8rem; margin-top: 5px;">Os usuários aparecerão aqui conforme forem entrando.</p>
+          </div>
+          <!-- Lista de usuários será carregada aqui dinamicamente -->
         </div>
       </div>
     </div>
@@ -1497,52 +1606,12 @@
       status: "solteiro",
       neighborhood: "",
       avatar: "https://ui-avatars.com/api/?name=Usuario&background=ff0000&color=fff",
-      online: true
+      online: false, // Começa offline até salvar o perfil
+      joinedAt: null
     };
     
-    // Lista de usuários simulada
-    const users = [
-      {
-        id: generateUserId(),
-        name: "João Silva",
-        age: 25,
-        gender: "masculino",
-        status: "solteiro",
-        neighborhood: "Vila Aurora",
-        avatar: "https://ui-avatars.com/api/?name=Joao+Silva&background=007bff&color=fff",
-        online: true
-      },
-      {
-        id: generateUserId(),
-        name: "Maria Santos",
-        age: 22,
-        gender: "feminino",
-        status: "casado",
-        neighborhood: "Jardim Ipiranga",
-        avatar: "https://ui-avatars.com/api/?name=Maria+Santos&background=e91e63&color=fff",
-        online: true
-      },
-      {
-        id: generateUserId(),
-        name: "Carlos Oliveira",
-        age: 30,
-        gender: "masculino",
-        status: "casado",
-        neighborhood: "Vila Operária",
-        avatar: "https://ui-avatars.com/api/?name=Carlos+Oliveira&background=4caf50&color=fff",
-        online: false
-      },
-      {
-        id: generateUserId(),
-        name: "Ana Costa",
-        age: 19,
-        gender: "feminino",
-        status: "solteiro",
-        neighborhood: "Jardim Novo Horizonte",
-        avatar: "https://ui-avatars.com/api/?name=Ana+Costa&background=9c27b0&color=fff",
-        online: true
-      }
-    ];
+    // Lista de usuários COMEÇA VAZIA
+    const users = [];
     
     // Variáveis para controle do chat
     let isPrivateChat = false;
@@ -1551,6 +1620,7 @@
     let fontSize = 16;
     let currentTheme = 'dark';
     let currentDevice = detectDevice();
+    let hasUserJoined = false; // Controle se o usuário já entrou no chat
     
     // Elementos do DOM
     let servicesBanner, sidebar, chatMessages, messageInput, sendBtn, emojiBtn, emojiPicker;
@@ -1559,6 +1629,7 @@
     let acceptPrivateBtn, rejectPrivateBtn, fullscreenBtn, settingsBtn;
     let settingsModal, closeSettingsBtn, decreaseFontBtn, increaseFontBtn;
     let currentFontSize, themeButtons, imageModal, modalImage, closeModalBtn;
+    let emptyUsersMessage, emptyUsersMessageMobile;
     
     // Emojis para o seletor
     const emojis = ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '😘', '🥰', '😗', '😙', '😚', '🙂', '🤗', '🤩', '🤔', '🤨', '😐', '😑', '😶', '🙄', '😏', '😣', '😥', '😮', '🤐', '😯', '😪', '😫', '🥱', '😴', '😌', '😛', '😜', '😝', '🤤', '😒', '😓', '😔', '😕', '🙃', '🤑', '😲', '☹️', '🙁', '😖', '😞', '😟', '😤', '😢', '😭', '😦', '😧', '😨', '😩', '🤯', '😬', '😰', '😱', '🥵', '🥶', '😳', '🤪', '😵', '😠', '🤬', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '😇', '🥳', '🥸', '🤠', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃'];
@@ -1572,7 +1643,7 @@
       // Carregar configurações salvas
       loadSettings();
       
-      // Inicializar lista de usuários
+      // Inicializar lista de usuários (vazia inicialmente)
       renderUsersList();
       
       // Configurar eventos do banner de serviços
@@ -1587,19 +1658,13 @@
       // Configurar PWA
       setupPWA();
       
+      // Configurar vídeo de fundo
+      setupBackgroundVideo();
+      
       // Adicionar mensagens iniciais ao chat
       addSystemMessage("Bem-vindo ao chat da Rondonópolis Store!");
-      addSystemMessage("Aqui você pode conversar com outros clientes e tirar dúvidas sobre nossos serviços.");
-      addSystemMessage(`Lembre-se: ${formatServicesMessage()}`);
-      
-      // Simular mensagens de outros usuários
-      setTimeout(() => {
-        addMessage(users[0], "Olá pessoal! Alguém já utilizou os serviços de formatação da loja?");
-      }, 1000);
-      
-      setTimeout(() => {
-        addMessage(users[1], "Sim, eu formatei meu notebook aqui. Ficou excelente e rápido!");
-      }, 3000);
+      addSystemMessage("Preencha seu perfil ao lado para entrar no chat.");
+      addSystemMessage("A sala está vazia no momento. Seja o primeiro a participar!");
       
       // Redimensionar a janela
       window.addEventListener('resize', () => {
@@ -1625,6 +1690,9 @@
       if (servicesBanner) {
         observer.observe(servicesBanner, { attributes: true });
       }
+      
+      // Simular entrada de usuários aleatórios após alguns segundos
+      simulateRandomUsers();
     });
     
     // Configurar elementos baseado no dispositivo
@@ -1658,6 +1726,7 @@
         imageModal = document.getElementById('imageModal');
         modalImage = document.getElementById('modalImage');
         closeModalBtn = document.getElementById('closeModal');
+        emptyUsersMessage = document.getElementById('emptyUsersMessage');
       } else {
         servicesBanner = document.getElementById('servicesBannerMobile');
         chatMessages = document.getElementById('chatMessagesMobile');
@@ -1678,6 +1747,24 @@
         rejectPrivateBtn = document.getElementById('rejectPrivateBtnMobile');
         fullscreenBtn = document.getElementById('fullscreenBtnMobile');
         settingsBtn = document.getElementById('settingsBtnMobile');
+        emptyUsersMessageMobile = document.getElementById('emptyUsersMessageMobile');
+      }
+    }
+    
+    // Configurar vídeo de fundo
+    function setupBackgroundVideo() {
+      const video = document.getElementById('bgVideo');
+      if (video) {
+        // Tenta reproduzir o vídeo (pode falhar em alguns dispositivos móveis)
+        video.play().catch(error => {
+          console.log("Auto-play do vídeo bloqueado:", error);
+          // Mostrar botão de play se necessário
+        });
+        
+        // Configurar loop
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
       }
     }
     
@@ -1704,9 +1791,74 @@
       }, 10000); // Alterna a cada 10 segundos
     }
     
-    // Formatar mensagem de serviços para exibição
-    function formatServicesMessage() {
-      return "FORMATAÇÃO DE COMPUTADORES por R$80,00 com instalação do Windows + Office ativados!";
+    // Simular entrada de usuários aleatórios
+    function simulateRandomUsers() {
+      // Array de nomes fictícios para usuários aleatórios
+      const randomNames = ["Ana Silva", "Carlos Santos", "Maria Oliveira", "João Costa", "Paula Lima", "Ricardo Souza", "Fernanda Alves", "Marcos Pereira", "Juliana Ribeiro", "Roberto Ferreira"];
+      const neighborhoods = ["Vila Aurora", "Jardim Ipiranga", "Vila Operária", "Jardim Novo Horizonte", "Centro", "Jardim das Flores", "Vila Rica", "Jardim Maracanã", "Vila São Paulo", "Jardim Santa Clara"];
+      
+      // Simular entrada do primeiro usuário após 10 segundos
+      setTimeout(() => {
+        if (users.length === 0 && hasUserJoined) {
+          addRandomUser(randomNames, neighborhoods);
+        }
+      }, 10000);
+      
+      // Simular entrada de novos usuários periodicamente
+      setInterval(() => {
+        // Só adiciona usuários se já houver alguém na sala
+        if (users.length > 0 && Math.random() > 0.7 && hasUserJoined) {
+          addRandomUser(randomNames, neighborhoods);
+        }
+        
+        // Simular saída aleatória de usuários
+        if (users.length > 1 && Math.random() > 0.9) {
+          const randomIndex = Math.floor(Math.random() * users.length);
+          // Não remover o usuário atual
+          if (users[randomIndex].id !== currentUser.id) {
+            users[randomIndex].online = false;
+            renderUsersList();
+            addSystemMessage(`${users[randomIndex].name} saiu do chat.`);
+          }
+        }
+      }, 30000); // A cada 30 segundos
+    }
+    
+    // Adicionar usuário aleatório
+    function addRandomUser(randomNames, neighborhoods) {
+      const name = randomNames[Math.floor(Math.random() * randomNames.length)];
+      const neighborhood = neighborhoods[Math.floor(Math.random() * neighborhoods.length)];
+      const gender = Math.random() > 0.5 ? "masculino" : "feminino";
+      const age = Math.floor(Math.random() * 20) + 18; // 18-37 anos
+      
+      const newUser = {
+        id: generateUserId(),
+        name: name,
+        age: age,
+        gender: gender,
+        status: Math.random() > 0.5 ? "solteiro" : "casado",
+        neighborhood: neighborhood,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${gender === "masculino" ? "007bff" : "e91e63"}&color=fff`,
+        online: true,
+        joinedAt: new Date()
+      };
+      
+      users.push(newUser);
+      renderUsersList();
+      addSystemMessage(`${name} entrou no chat.`);
+      
+      // Simular mensagem do novo usuário
+      setTimeout(() => {
+        const greetings = [
+          "Olá pessoal! Alguém já usou os serviços de formatação?",
+          "Oi gente! Tudo bem?",
+          "Boa tarde! Alguém sabe se atendem também aos sábados?",
+          "Olá! Acabei de chegar no chat.",
+          "Oi! Alguém recomenda os serviços de suporte remoto?"
+        ];
+        const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+        addMessage(newUser, randomGreeting);
+      }, 2000);
     }
     
     // Configurar PWA
@@ -1762,33 +1914,33 @@
     // Configurar todos os event listeners
     function setupEventListeners() {
       // Botão de tela cheia
-      fullscreenBtn.addEventListener('click', toggleFullscreen);
+      if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
       
       // Botão de configurações
-      settingsBtn.addEventListener('click', () => {
+      if (settingsBtn) settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('show');
       });
       
       // Fechar modal de configurações
-      closeSettingsBtn.addEventListener('click', () => {
+      if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', () => {
         settingsModal.classList.remove('show');
       });
       
       // Fechar modal ao clicar fora
-      settingsModal.addEventListener('click', (e) => {
+      if (settingsModal) settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
           settingsModal.classList.remove('show');
         }
       });
       
       // Formulário de perfil
-      profileForm.addEventListener('submit', (e) => {
+      if (profileForm) profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
         saveProfile();
       });
       
       // Alterar foto de perfil
-      profilePicContainer.addEventListener('click', () => {
+      if (profilePicContainer) profilePicContainer.addEventListener('click', () => {
         imageUpload.click();
       });
       
@@ -1806,8 +1958,8 @@
       });
       
       // Enviar mensagem
-      sendBtn.addEventListener('click', sendMessage);
-      messageInput.addEventListener('keypress', (e) => {
+      if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+      if (messageInput) messageInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           sendMessage();
@@ -1815,25 +1967,25 @@
       });
       
       // Ajustar altura do textarea
-      messageInput.addEventListener('input', () => {
+      if (messageInput) messageInput.addEventListener('input', () => {
         messageInput.style.height = 'auto';
         messageInput.style.height = (messageInput.scrollHeight) + 'px';
       });
       
       // Botão de emojis
-      emojiBtn.addEventListener('click', () => {
+      if (emojiBtn) emojiBtn.addEventListener('click', () => {
         emojiPicker.classList.toggle('show');
       });
       
       // Fechar seletor de emojis ao clicar fora
       document.addEventListener('click', (e) => {
-        if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+        if (emojiBtn && !emojiBtn.contains(e.target) && emojiPicker && !emojiPicker.contains(e.target)) {
           emojiPicker.classList.remove('show');
         }
       });
       
       // Botão de enviar imagem
-      imageBtn.addEventListener('click', () => {
+      if (imageBtn) imageBtn.addEventListener('click', () => {
         imageUpload.click();
       });
       
@@ -1850,32 +2002,32 @@
       });
       
       // Visualizar imagem em tamanho grande
-      closeModalBtn.addEventListener('click', () => {
+      if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
         imageModal.classList.remove('show');
       });
       
       // Fechar modal de imagem ao clicar fora
-      imageModal.addEventListener('click', (e) => {
+      if (imageModal) imageModal.addEventListener('click', (e) => {
         if (e.target === imageModal) {
           imageModal.classList.remove('show');
         }
       });
       
       // Aceitar chat privado
-      acceptPrivateBtn.addEventListener('click', acceptPrivateChat);
+      if (acceptPrivateBtn) acceptPrivateBtn.addEventListener('click', acceptPrivateChat);
       
       // Recusar chat privado
-      rejectPrivateBtn.addEventListener('click', rejectPrivateChat);
+      if (rejectPrivateBtn) rejectPrivateBtn.addEventListener('click', rejectPrivateChat);
       
       // Controles de tamanho da fonte
-      decreaseFontBtn.addEventListener('click', () => {
+      if (decreaseFontBtn) decreaseFontBtn.addEventListener('click', () => {
         if (fontSize > 12) {
           fontSize--;
           updateFontSize();
         }
       });
       
-      increaseFontBtn.addEventListener('click', () => {
+      if (increaseFontBtn) increaseFontBtn.addEventListener('click', () => {
         if (fontSize < 24) {
           fontSize++;
           updateFontSize();
@@ -1883,7 +2035,7 @@
       });
       
       // Controles de tema
-      themeButtons.forEach(btn => {
+      if (themeButtons) themeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           themeButtons.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
@@ -1907,7 +2059,7 @@
       const backToChatBtn2 = document.getElementById('backToChatBtn2');
       const newChatBtnMobile = document.getElementById('newChatBtnMobile');
       
-      menuButtons.forEach(btn => {
+      if (menuButtons) menuButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           const page = btn.getAttribute('data-page');
           
@@ -1967,6 +2119,8 @@
     
     // Inicializar seletor de emojis
     function initEmojiPicker() {
+      if (!emojiPicker) return;
+      
       emojis.forEach(emoji => {
         const emojiSpan = document.createElement('span');
         emojiSpan.textContent = emoji;
@@ -1985,25 +2139,41 @@
     
     // Renderizar lista de usuários
     function renderUsersList() {
-      usersList.innerHTML = '';
-      
-      // Adicionar usuário atual no início (apenas no PC)
-      if (currentDevice === 'pc') {
-        const currentUserElement = createUserElement(currentUser, true);
-        usersList.appendChild(currentUserElement);
-      }
-      
-      // Adicionar outros usuários
-      users.forEach(user => {
-        if (user.id !== currentUser.id) {
-          const userElement = createUserElement(user);
-          usersList.appendChild(userElement);
-        }
-      });
+      if (!usersList) return;
       
       // Atualizar contador de usuários online
-      const onlineUsers = users.filter(user => user.online).length + 1;
+      const onlineUsers = users.filter(user => user.online).length + (currentUser.online ? 1 : 0);
       if (onlineCount) onlineCount.textContent = onlineUsers;
+      
+      // Limpar lista atual
+      usersList.innerHTML = '';
+      
+      // Verificar se há usuários online (excluindo o usuário atual)
+      const onlineUsersExceptCurrent = users.filter(user => user.online);
+      
+      if (onlineUsersExceptCurrent.length === 0 && !currentUser.online) {
+        // Sala vazia - mostrar mensagem
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'empty-users-message';
+        emptyMsg.innerHTML = `
+          <i class="fas fa-users-slash"></i>
+          <p>A sala está vazia. Seja o primeiro a entrar!</p>
+          <p style="font-size: 0.8rem; margin-top: 5px;">Os usuários aparecerão aqui conforme forem entrando.</p>
+        `;
+        usersList.appendChild(emptyMsg);
+      } else {
+        // Adicionar usuário atual (se estiver online)
+        if (currentUser.online) {
+          const currentUserElement = createUserElement(currentUser, true);
+          usersList.appendChild(currentUserElement);
+        }
+        
+        // Adicionar outros usuários online
+        onlineUsersExceptCurrent.forEach(user => {
+          const userElement = createUserElement(user);
+          usersList.appendChild(userElement);
+        });
+      }
     }
     
     // Criar elemento de usuário para a lista
@@ -2019,13 +2189,14 @@
           <div class="user-status">
             <span class="status-dot ${user.online ? 'online' : ''}"></span>
             ${user.online ? 'Online' : 'Offline'} | ${user.age} anos
+            ${user.neighborhood ? ` | ${user.neighborhood}` : ''}
           </div>
         </div>
-        ${!isCurrentUser ? '<button class="private-chat-btn" title="Chat privado"><i class="fas fa-comment-dots"></i></button>' : ''}
+        ${!isCurrentUser && user.online ? '<button class="private-chat-btn" title="Chat privado"><i class="fas fa-comment-dots"></i></button>' : ''}
       `;
       
       // Adicionar evento de clique para iniciar chat privado
-      if (!isCurrentUser) {
+      if (!isCurrentUser && user.online) {
         const privateBtn = userElement.querySelector('.private-chat-btn');
         privateBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2036,7 +2207,7 @@
       return userElement;
     }
     
-    // Salvar perfil do usuário
+    // Salvar perfil do usuário - AGORA ENTRA NO CHAT
     function saveProfile() {
       currentUser.name = currentDevice === 'pc' ? 
         document.getElementById('userName').value : 
@@ -2058,8 +2229,15 @@
         document.getElementById('userNeighborhood').value : 
         document.getElementById('userNeighborhoodMobile').value;
       
+      // Entrar no chat
+      currentUser.online = true;
+      currentUser.joinedAt = new Date();
+      hasUserJoined = true;
+      
+      // Atualizar avatar se houver
+      currentUser.avatar = profilePic.src;
+      
       userNameDisplay.textContent = currentUser.name;
-      profilePic.src = currentUser.avatar;
       
       // Atualizar na lista de usuários
       renderUsersList();
@@ -2068,9 +2246,14 @@
       saveToLocalStorage('userProfile', currentUser);
       
       // Adicionar mensagem de sistema
-      addSystemMessage(`Perfil atualizado: ${currentUser.name} entrou no chat!`);
+      addSystemMessage(`🎉 ${currentUser.name} entrou no chat!`);
       
-      console.log('Perfil salvo:', currentUser);
+      // Adicionar mensagem de boas-vindas do usuário
+      setTimeout(() => {
+        addMessage(currentUser, "Olá pessoal! Acabei de entrar no chat. Alguém já utilizou os serviços da loja?");
+      }, 1000);
+      
+      console.log('Perfil salvo e usuário entrou no chat:', currentUser);
     }
     
     // Enviar mensagem
@@ -2078,6 +2261,12 @@
       const messageText = messageInput.value.trim();
       
       if (messageText === '') return;
+      
+      // Verificar se o usuário já entrou no chat
+      if (!currentUser.online) {
+        alert('Por favor, preencha e salve seu perfil antes de enviar mensagens.');
+        return;
+      }
       
       // Adicionar mensagem ao chat
       addMessage(currentUser, messageText);
@@ -2089,7 +2278,7 @@
       console.log('Mensagem enviada:', messageText);
       
       // Simular resposta de outros usuários
-      if (!isPrivateChat && Math.random() > 0.5) {
+      if (!isPrivateChat && users.length > 0 && Math.random() > 0.5) {
         const randomUser = users.filter(u => u.online && u.id !== currentUser.id)[0];
         if (randomUser) {
           setTimeout(() => {
@@ -2098,7 +2287,11 @@
               "Concordo com você!",
               "Alguém mais tem experiência com esses serviços?",
               "Vou considerar isso, obrigado!",
-              "Alguém sabe se atendem também no bairro Jardim das Flores?"
+              "Alguém sabe se atendem também no bairro Jardim das Flores?",
+              "Eu já formatei meu PC lá, ficou excelente!",
+              "O suporte remoto é muito bom mesmo, recomendo!",
+              "Preços justos e atendimento rápido!",
+              "Já precisei do serviço de ativação do Office, resolveram na hora!"
             ];
             const randomResponse = responses[Math.floor(Math.random() * responses.length)];
             addMessage(randomUser, randomResponse);
@@ -2109,6 +2302,12 @@
     
     // Enviar imagem
     function sendImage(imageData) {
+      // Verificar se o usuário já entrou no chat
+      if (!currentUser.online) {
+        alert('Por favor, preencha e salve seu perfil antes de enviar imagens.');
+        return;
+      }
+      
       addMessage(currentUser, '', imageData);
       console.log('Imagem enviada');
     }
@@ -2247,21 +2446,21 @@
         Object.assign(currentUser, savedProfile);
         
         if (currentDevice === 'pc') {
-          document.getElementById('userName').value = currentUser.name;
-          document.getElementById('userAge').value = currentUser.age;
-          document.getElementById('userGender').value = currentUser.gender;
-          document.getElementById('userStatus').value = currentUser.status;
-          document.getElementById('userNeighborhood').value = currentUser.neighborhood;
+          if (document.getElementById('userName')) document.getElementById('userName').value = currentUser.name;
+          if (document.getElementById('userAge')) document.getElementById('userAge').value = currentUser.age;
+          if (document.getElementById('userGender')) document.getElementById('userGender').value = currentUser.gender;
+          if (document.getElementById('userStatus')) document.getElementById('userStatus').value = currentUser.status;
+          if (document.getElementById('userNeighborhood')) document.getElementById('userNeighborhood').value = currentUser.neighborhood;
         } else {
-          document.getElementById('userNameMobile').value = currentUser.name;
-          document.getElementById('userAgeMobile').value = currentUser.age;
-          document.getElementById('userGenderMobile').value = currentUser.gender;
-          document.getElementById('userStatusMobile').value = currentUser.status;
-          document.getElementById('userNeighborhoodMobile').value = currentUser.neighborhood;
+          if (document.getElementById('userNameMobile')) document.getElementById('userNameMobile').value = currentUser.name;
+          if (document.getElementById('userAgeMobile')) document.getElementById('userAgeMobile').value = currentUser.age;
+          if (document.getElementById('userGenderMobile')) document.getElementById('userGenderMobile').value = currentUser.gender;
+          if (document.getElementById('userStatusMobile')) document.getElementById('userStatusMobile').value = currentUser.status;
+          if (document.getElementById('userNeighborhoodMobile')) document.getElementById('userNeighborhoodMobile').value = currentUser.neighborhood;
         }
         
-        profilePic.src = currentUser.avatar;
-        userNameDisplay.textContent = currentUser.name;
+        if (profilePic) profilePic.src = currentUser.avatar;
+        if (userNameDisplay) userNameDisplay.textContent = currentUser.name;
       }
       
       // Carregar tamanho da fonte
